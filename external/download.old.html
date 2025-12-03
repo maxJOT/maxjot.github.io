@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Download</title>
+</head>
+<body>
+
+<p>Your download should start automatically...</p>
+<p>You can close this tab when done, or reload this page to download again.</p>
+
+<script>
+// Parse ?file=...
+const params = new URLSearchParams(window.location.search);
+let file = params.get("file");
+
+if (!file) {
+    document.body.innerHTML = "<p style='color:red'>Error: no file specified.</p>";
+} else {
+    // Extract filename from the path
+    const filename = file.split('/').pop();
+
+    // Create a temporary <a> to force download
+    const a = document.createElement('a');
+    a.href = file;
+    a.download = filename;     // <-- forces browser to save instead of view
+    a.style.display = 'none';
+
+    document.body.appendChild(a);
+
+    // Trigger the download
+    a.click();
+
+    // Cleanup
+    document.body.removeChild(a);
+}
+</script>
+
+</body>
+</html>

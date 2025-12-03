@@ -1,0 +1,89 @@
+
+/* Target all generated Markdown content */
+.wm-page-content:not(footer) {
+    color: #000000; /* Text color */
+    background-color: rgba(0, 0, 0, 0); /* Transparent background */
+    
+    /* font-family: Archivo, sans-serif; /* Font stack */
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 
+                 "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell, 
+                 "Helvetica Neue", Helvetica, Arial, sans-serif; !important;
+    font-size: 16px;
+    line-height: 1.3; 
+    vertical-align: baseline; /* Vertical alignment */
+    letter-spacing: normal; /* Letter spacing */
+    word-spacing: 0; /* Word spacing */
+    
+    margin: 10px 60px 0 40px; /* Margin: top, right, bottom, left */
+    padding: 0; /* Padding */
+    
+    font-weight: 400; /* Regular font weight */
+    font-style: normal; /* Normal font style */
+    font-variant: normal; /* Normal font variant */
+    text-transform: none; /* No text transformation */
+    text-decoration: none; /* No text decoration */
+    /* text-align: start; /* Align text */
+    text-indent: 0; /* No text indent */
+}
+
+
+/* banner background */
+.navbar {
+  background-color: #003399 !important;
+}
+
+/* page title */
+.wm-top-title {
+  color: yellow !important;
+}
+
+/* sidebar item text (default) */
+.wm-toctree a,
+.wm-toctree a:visited,
+.wm-toctree a:hover,
+.wm-toctree a:focus {
+  color: white !important;
+}
+
+/* sidebar background */
+.wm-toc-pane {
+  background-color: #003399 !important;
+}
+
+/* sidebar active item background */
+.wm-toc-li.wm-current,
+.wm-toc-li.wm-current:hover {
+  background-color: #ccc !important;
+}
+
+/* sidebar active text color */
+.wm-toc-li.wm-current a {
+  color: yellow !important;
+}
+
+/* sidebar expanded nested marker */
+.wm-toc-li-nested.wm-page-toc {
+  border-left: 1px solid white !important;
+}
+
+/* sidebar folder arrows */
+.wm-toc-opener > .wm-toc-text::before {
+  color: white !important;
+}
+
+/* folder names */
+.wm-page-top-frame {
+  color: white !important;
+}
+
+/* hover behavior */
+.wm-toc-li:hover,
+.wm-toc-li:hover > a {
+  background-color: #ccc !important;
+  color: black !important;
+}
+
+.wm-toc-li:hover a {
+  color: black !important;
+}
+

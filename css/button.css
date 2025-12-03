@@ -1,0 +1,50 @@
+.hover-fill-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 1em;
+  background-color: white;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.hover-fill-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #2563eb;
+  z-index: 0;
+  transition: width 0.3s ease, background-color 0.2s ease;
+}
+
+.hover-fill-btn:hover::before {
+  width: 100%;
+}
+
+.hover-fill-btn span {
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.hover-fill-btn:hover span {
+  color: white;
+}
+
+.hover-fill-btn:active::before {
+  background-color: #1e40af;
+}
+
+.hover-fill-btn:active span {
+  color: #e0e7ff;
+}
+

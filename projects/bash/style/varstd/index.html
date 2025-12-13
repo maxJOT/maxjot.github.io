@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    <link rel="shortcut icon" href="../../../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Naming Proposal - maxJOT</title>
+    <link href="../../../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../../css/highlight.css">
+    <link href="../../../../css/custom.css" rel="stylesheet">
+    <link href="../../../../css/button.css" rel="stylesheet">
+    <link href="../../../../css/highlight/sunburst.css" rel="stylesheet">
+    <link href="../../../../css/highlight/code.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../../../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Bash Variable Naming Proposal", url: "#_top", children: [
+              {title: "Introduction", url: "#introduction" },
+              {title: "1. Global vs. Local", url: "#1-global-vs-local" },
+              {title: "2. Uppercase vs. Lowercase", url: "#2-uppercase-vs-lowercase" },
+              {title: "2. Global Variables", url: "#2-global-variables" },
+              {title: "3. Local Variables", url: "#3-local-variables" },
+              {title: "4. Variable Naming Chart", url: "#4-variable-naming-chart" },
+              {title: "5. Benefits", url: "#5-benefits" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../../../js/base.js"></script>
+      <script src="../../../../js/dynamic_sidebar.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    <!---
+Filename: varstd.md  
+Author:   maxJOT 
+Date:     09-DEC-2025
+-->
+<h1 id="bash-variable-naming-proposal">Bash Variable Naming Proposal</h1>
+<p>Copyright (c) 2025 maxJot, All Rights Reserved.
+<br>
+<br>
+Draft
+<br></p>
+<h2 id="introduction">Introduction</h2>
+<p><br>
+Bash scripting is widely used for automation, system management, and small utilities. While some comprehensive style-guides exist, there is little formal guidance for <strong>variable naming</strong>, which is important for readability and maintainability.</p>
+<p>This document proposes a <strong>consistent convention for Bash variable names</strong>, covering <strong>constants, environment variables, global variables, local variables, arrays, and practical examples</strong> to improve clarity, reduce errors, and facilitate collaboration.</p>
+<hr />
+<p><br></p>
+<h2 id="1-global-vs-local">1. Global vs. Local</h2>
+<p><br></p>
+<p>Any variable in Bash is <strong>global by default</strong>, regardless of being defined inside or outside a function. Only variables declared with the <strong>local keyword</strong> are <strong>detached from the global scope</strong>. The local keyword can only be used inside functions.</p>
+<p>Example:</p>
+<pre><code class="language-bash">var=1
+
+function test_local() {
+  local var=2             # Does not affect the global variable.
+  echo $var
+}
+function test_global() {
+  var=3                   # Redefine the global variable.
+}
+
+test_local
+echo $var
+test_global
+echo $var
+</code></pre>
+<p>Result:</p>
+<pre><code>2
+1
+3
+</code></pre>
+<hr />
+<p><br></p>
+<h2 id="2-uppercase-vs-lowercase">2. Uppercase vs. Lowercase</h2>
+<p><br>
+Use <strong>UPPERCASE</strong> for any variable with a <strong>global scope</strong> and whose <strong>value does not change during script execution</strong>.
+<br>
+<br>
+The rule is simple: </p>
+<p>Always use <strong>uppercase</strong> for:</p>
+<ul>
+<li><strong>Global</strong> variables with <strong>fixed content</strong></li>
+<li>Exported variables</li>
+</ul>
+<p>The common denominator is that these variables are global and not meant to be changed. Place such variables at the top of the script, or in a dedicated configuration section or function.</p>
+<p>For any other variable, use <strong>lowercase</strong>.</p>
+<h3 id="examples">Examples</h3>
+<pre><code class="language-bash">IFNAMSIZ=16                        # Constant limiting iface name length.
+BD=$'\e[1m'                        # Global terminal escape sequence for bold text.
+IAM=${BASH_SOURCE[0]##*/}          # Fixed script name, global.
+export WKDIR=/tmp                  # Global variable $WKDIR including sub-shells.
+declare -r MAX_TRIES=5             # Global read-only variable.
+</code></pre>
+<hr />
+<p><br></p>
+<h2 id="2-global-variables">2. Global Variables</h2>
+<p><br>
+Use <strong>lowercase</strong> names with a <code>_</code> + <code>number</code> suffix for <strong>global</strong> variables whose <strong>values may change</strong> during script execution. A <code>_0</code> suffix is usually sufficient, but in complex scripts, you can assign a specific number to the variable name to match the defining function, making it easier to track the variable’s origin.</p>
+<h3 id="examples_1">Examples</h3>
+<pre><code class="language-bash">num_tries_0=10                # Total number of tries applying globally.
+debug_0=on                    # Switch debug on or off on demand.
+status_0=&quot;in progress&quot;        # Current status, available globally.
+declare -a info_array_0=()    # Global array variable, update on demand.
+
+function name_1(){
+  day_1=Friday                # Global variable defined in function 'name_1'.
+}
+echo &quot;${day_1}&quot;               # Variable was defined in function 'name_1'.
+
+</code></pre>
+<hr />
+<p><br></p>
+<h2 id="3-local-variables">3. Local Variables</h2>
+<p><br>
+Use <strong>lowercase</strong> names for variables that are used temporarily or are only valid inside a function. Temporary variables are typically loop counters or variables used to process intermediate results.</p>
+<h3 id="examples_2">Examples</h3>
+<pre><code class="language-bash">a=( 'BD:bold' 'C1:setaf 1' 'RG:bel' 'T0:sgr0' )            # Helper array $a.
+for i in &quot;${a[@]}&quot;; do                                     # Temporary loop variable $i.
+  printf -v &quot;${i%:*}&quot; '%s' &quot;$(tput ${i#*:} 2&gt;/dev/null)&quot;   # Create temporary variables
+  export ${i%:*}                                           # and export them as globals.
+done
+echo ${RG}bell
+
+get_random() {
+  local rand=$(mktemp -u XXXXXX)                           # # Local temporary variable.
+  echo &quot;${rand}&quot;
+}
+</code></pre>
+<hr />
+<p><br></p>
+<h2 id="4-variable-naming-chart">4. Variable Naming Chart</h2>
+<p><br>
+The following chart provides an overview of common variable categories for readers already familiar with Bash.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Scope &amp; Usage</th>
+<th>Naming Convention</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Constants, Env, <br>Global variables (fixed)</td>
+<td>Script-wide</td>
+<td>UPPERCASE</td>
+<td>RG, IFNAMSIZ, IAM</td>
+</tr>
+<tr>
+<td>Global variables</td>
+<td>Script-wide</td>
+<td>lowercase + <code>_#</code></td>
+<td>info_array_0, day_1</td>
+</tr>
+<tr>
+<td>Local variables (function)</td>
+<td>Detached from global scope</td>
+<td>lowercase</td>
+<td>rand</td>
+</tr>
+<tr>
+<td>Temporary variables</td>
+<td>Intermediate, counters</td>
+<td>lowercase</td>
+<td>i, a[i]</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<hr />
+<p><br></p>
+<h2 id="5-benefits">5. Benefits</h2>
+<p><br>
+- This standard emphasizes <strong>clarity, maintainability, and scope awareness</strong>.<br />
+- Compatible with complex and large Bash scripts.<br />
+- Intended as an <strong>easy to comprehend and adoptable standard</strong>.</p>
+<hr />
+
+  <br>
+</div>
+
+<footer class="container-fluid wm-page-content">Copyright (c) 2025 maxJOT, All Rights Reserved. Please see License for details. 
+
+  <p>Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a customized version of the <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

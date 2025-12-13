@@ -1,0 +1,27 @@
+/* code.css: custom styling for code blocks and highlight.js */
+
+pre {
+    background: #1e1e1e;   /* sunburst black background */
+    border: none;          /* remove white border */
+    padding: 1em;
+    margin: 1em 0;
+    border-radius: 0.3em;
+    overflow-x: auto;
+}
+
+pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: monospace, serif;
+    font-size: 12px;
+}
+
+/*
+
+code {
+    background: #1e1e1e;   /* optional, for inline code */
+    color: #f8f8f2;
+    padding: 2px 5px;
+    border-radius: 0.2em;
+} */

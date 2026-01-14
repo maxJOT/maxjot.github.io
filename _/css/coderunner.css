@@ -1,0 +1,183 @@
+/*
+File: coderunner.css
+Author: maxJOT, 06-DEC-2025
+*/
+
+
+@media print {
+  @page {
+    margin-top: 0.5in;
+    margin-bottom: 0.5in;
+    margin-left: 0.25in;
+    margin-right: 0;
+    /* zoom: 95%; */
+  }
+  body {transform: scale(.95);
+  }
+  a::after {
+    content: " (" attr(href) ")";
+  } 
+}
+
+
+/* Code block styling */
+pre {
+  display: none;  /* hidden by default */
+  font-family: monospace;
+  background-color: #300a24;
+  color: #f9f3d8;
+  padding: 1em;
+  overflow-x: auto;
+  font-size: 14px;
+}
+
+/* Line numbers */
+.hljs-ln-n {
+  width: 4ch;           /* fixed width for line numbers */
+  text-align: right;
+  padding-right: 1em;
+  background-color: #450e34; 
+  color: #00ff00; /* #ffc0cb; */
+  font-family: monospace;
+  user-select: none;
+  font-size: 0.85em;    /* smaller than code */
+}
+
+.hljs-built_in {
+  color: #f9f3d8;
+}
+
+.hljs {
+  background: #300a24;
+  color: #f9f3d8;
+}
+
+/* bash # comment */
+.hljs-comment,
+.hljs-quote {
+  color: #b5b5b5;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  color: #ff0000;
+}
+
+.hljs-string {
+  color: #f9f3d8; /* #ededed; */
+}
+
+.hljs-subst {
+  color: white;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: white;
+}
+
+/* bash function name */
+.hljs-title,
+.hljs-section,
+.hljs-tag,
+.hljs-name { 
+  color: white;   
+}
+
+.hljs-title.class_,
+.hljs-class .hljs-title,
+.hljs-doctag {
+  text-decoration: underline;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-number {
+  color: white;
+}
+
+
+/* bash variable names */
+.hljs-params,
+.hljs-variable,
+.hljs-template-variable {
+  color: #89bdff;
+}
+
+/* shebang */
+.hljs-meta {
+  color: white;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.cr-double-quote {
+  color: #ffa500;
+}
+
+.cr-single-quote {
+  color: white;
+  font-weight: bold;
+}
+
+.cr-brace-open {
+  color: #89bdff;
+}
+
+.cr-brace-close {
+  color: #89bdff;
+}
+
+.cr-bracket-open {
+  font-weight: bold;
+  color: #f9f3d8;
+}
+
+.cr-bracket-close {
+  font-weight: bold;
+  color: #f9f3d8;
+}
+
+.cr-paren-open {
+  color: white;
+}
+
+.cr-paren-close {
+  color: white;
+}
+
+.cr-backtick {
+  color: white;
+}
+
+.cr-greater {
+  color: white;
+}
+
+.cr-smaller {
+  color: white;
+}
+
+.cr-ampersand {
+  color: #ff0000;
+}
+
+.cr-semicolon {
+  color: #ff0000;
+}
+
+.cr-pipe {
+  color: #ff0000;
+}
+
+.cr-dollar {
+  color: #89bdff;
+}

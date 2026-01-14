@@ -1,0 +1,58 @@
+<!--
+  File: download.html
+  Author: maxJOT, 10-DEC-2025
+  Purpose: Handles file downloads by verifying the file exists
+           and triggering a browser download if valid.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta charset="utf-8">
+<title>Download</title>
+</head>
+<body>
+<p id="msg" style="display:none;white-space: pre-wrap;"></p>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+let file = params.get("file");
+const msg = document.getElementById("msg");
+
+if (!file) {
+    msg.textContent = "Error: no file specified.";
+    msg.style.display = "block";   // show error
+} else {
+    // Check if file exists
+    fetch(file, { method: "HEAD" })
+        .then(r => {
+            if (!r.ok) throw new Error("File not found");
+
+            // File exists → show “Starting download...” and trigger
+            msg.style.color = "black";
+            msg.textContent = "Your download should start automatically...\n" +
+              "You can close this tab when done, or reload this page to " +
+              "download again.\n"
+            msg.style.display = "block";
+
+            const filename = file.split('/').pop();
+            const a = document.createElement("a");
+            a.href = file;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        })
+        .catch(err => {
+            msg.textContent = "Error: "+ err.message;
+            msg.style.color = "red";
+            msg.style.display = "block";   // show error
+        });
+}
+
+</script>
+
+</body>
+</html>

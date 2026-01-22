@@ -1,0 +1,332 @@
+/* File: sublemental-ui/css/maxjot.css
+   Author: maxJOT, 20-DEC-2025
+   Purpose: overwrite site.css from the default-ui theme by adding
+            it to head-styles.hbs.
+*/
+
+
+/* Use glightbox for a better user experience displaying images */
+@import url("glightbox.min.css");
+
+/* Stylesheet for partials/image.adoc (glightbox) */
+
+.doc .doc-image {
+  display: inline-block;
+  text-align: center;
+  margin: 1.5rem 0;   /* vertical spacing from text */
+}
+
+.doc .doc-image img {
+  display: block;
+  margin: 0 auto;
+}
+
+.doc .doc-image figcaption {
+  margin: 0.25rem 0 0 0;     /* small space below image only */
+  font-size: 0.75em;
+  color: #555;
+  text-align: center;
+}
+
+.doc h1 + .doc-image,
+.doc h2 + .doc-image,
+.doc h3 + .doc-image {
+  margin-top: 1rem;
+}
+
+.doc .doc-image + p {
+  margin-top: 1rem;
+}
+
+.doc .doc-image a.glightbox {
+  margin: 0;          /* no extra spacing between image and caption */
+}
+
+/* Stylesheet for code stuff */
+
+.doc pre.highlight > code,
+.doc .listingblock pre:not(.highlight) {
+  background: #e7eff8;
+  font-family: monospace, serif;
+  font-size: 12px;
+  border: 1px solid #b6c8e0;
+  border-radius: 0.4em;
+  overflow-x: auto;
+}
+
+.doc .literalblock pre {
+  background: #f5f5f5 !important;   /* light neutral background */
+  color: #000 !important;           /* readable black text */
+  font-family: monospace, serif;    /* monospace */
+  font-size: 12px;
+  border-radius: 0.25em;
+  padding: 0.75em;
+  overflow-x: auto;
+}
+
+.doc p code,
+.doc thead code,
+.doc .colist > table code {
+  color: black !important;
+  background: #f5f5f5 !important;
+  border-radius: 0.25em;
+  font-size: 0.95em;              /* 95% parent element font size */
+  padding: 0.125em 0.25em;
+}
+
+/* Configure sidebar aspects */
+
+.nav-container,
+.nav {
+  background-color: #f9f3d8 !important;
+  /* Compenate the --navbar-heigh used by other calculation in site.css of
+     the default-ui. Since we disabled the header-content.hbs in header.hbs,
+     the we simply compensate --navbar-height using a negative value. Hence
+     clickin the nav title and docuemnt link no longer cuases any top shifting */
+  top: -3.5rem !important;
+}
+
+.toolbar {
+  /* Move the toolbar (breadcumbs) to the top of the browser window */
+  top: 0 !important; 
+}
+
+
+.nav-menu h3.title {
+  /* Since we no longer want a header, we use the title defined in antora.yml
+     as the site name and how it in a different color and larger font size.
+     It has the same affect than clicking the home button." */
+  color: #df6a19 !important;
+  /* Increase the distance to the nav items. */
+  padding: 0 0 1.5em;
+  /* font-family: "Source Sans 3", "Source Sans Pro", sans-serif; */
+  font-size: 1.25rem !important;
+}
+
+/* Create a white circle with a '#' inside, followed by the title. */
+
+.nav-menu h3.title.title-image img {
+  width: 150px;      /* desired width */
+  height: auto;      /* maintain aspect ratio */
+  max-width: 100%;   /* prevents overflow if sidebar is narrow */
+  display: block;    /* optional: remove inline spacing */
+}
+
+body {
+  /* We are no longer using header-content.hbs. Hence shift the content to
+     the top of the browser window. */
+  padding-top: 0 !important;
+}
+
+.doc, .content, .doc * {
+  word-wrap: normal !important;
+  overflow-wrap: normal !important;
+  hyphens: none !important;
+}
+
+.nav-menu-toggle {
+  background-image: url(../img/map-closed.png);
+  width: 1.5rem;         /* ensure visible size */
+  height: 1.5rem;        /* ensure visible size */
+  background-repeat: no-repeat;
+  background-position: center;
+  position: fixed;      /* fixes to viewport */
+  background-size: contain;
+  top: 0.8rem;            /* distance from top of viewport */
+  left: 12.5rem;          /* distance from right edge of viewport */
+  visibility: visible;  /* always show */
+}
+
+.nav-menu-toggle.is-active {
+  background-image: url(../img/map-open.png);
+}
+
+.nav-menu-toggle.is-active {
+  background-image: url(../img/map-open.png);
+}
+
+.is-current-page > .nav-link,
+.is-current-page > .nav-text {
+  color: #df6a19 !important;
+}
+
+/* Configure how to show the "language | [copy-icon]" header in code blocks. 
+   The procedure to provide feedback has been relaced. Please see the
+   customized 06-copy-to-clipboard.js */
+    
+.doc .source-toolbox {
+  display: flex;
+  /* visibility: hidden; */
+  visibility: visible !important;
+  position: absolute;
+  /* top: 0.25rem; */
+  top: -1.2rem !important;
+  right: 4.5rem;
+  color: var(--pre-annotation-font-color);
+  font-family: var(--body-font-family);
+  font-size: calc(13 / var(--rem-base) * 1rem);
+  line-height: 1;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.doc .source-toolbox .source-lang {
+  visibility: hidden !important; /* Don't show the syntax language */
+}
+
+/* Copy button */
+.doc .source-toolbox .copy-button {
+  position: relative; /* needed for positioning overlay */
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+/* The icon itself */
+.doc .source-toolbox .copy-icon {
+  filter: none !important;
+  object-fit: contain !important;
+}
+
+.doc .source-toolbox .copy-button.is-copied::after {
+  content: "Copied!";
+  position: absolute;
+  left: 3em;       /* slightly to the right of the checkmark */
+  color: black;
+}
+
+.doc .source-toolbox .copy-button.is-copied .copy-icon {
+  opacity: 0;
+}
+
+.doc .source-toolbox .copy-button.is-copied .copy-label {
+  opacity: 0;
+}
+
+.doc .source-toolbox .copy-button.is-copied::before {
+  content: "✓";
+  position: absolute;
+  left: 2em;     /* offset from the original icon */
+  color: black;
+}
+
+.doc .source-toolbox .copy-label {
+  margin-left: 0.5em;  /* space between copy icon and Copy code text */
+}
+
+.doc .source-toolbox .copy-label,
+.doc .source-toolbox .copy-button.is-copied::before,
+.doc .source-toolbox .copy-button.is-copied::after {
+  font-weight: normal;  /* or 400 */
+  font-size: 0.75em;
+}
+
+/* The following section defineds stylesheets related to the buttons
+   generated by download.adoc and script_viewer.adoc includes. */
+
+.hover-fill-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 1em;
+  background-color: white;
+  color: black;
+  border: 2px solid #c8c8c8;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.hover-fill-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #6495ed;
+  z-index: 0;
+  transition: width 0.3s ease, background-color 0.2s ease;
+}
+
+.hover-fill-btn:hover::before {
+  width: 100%;
+}
+
+.hover-fill-btn span {
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.hover-fill-btn:hover span,
+.hover-fill-btn:active span {
+  color: white;
+}
+
+.hover-fill-btn:active::before {
+  background-color: #1f66e5;
+}
+
+.hover-fill-btn:hover {
+  border-color: #6495ed;
+}
+
+.hover-fill-btn:active {
+  border-color: #1f66e5;
+}
+
+.hover-fill-btn:active:not(:hover) span {
+  color: black;
+}
+
+/* Make the form behave like a block-level element with spacing */
+.doc form.external-btn-form {
+  display: inline-block;  /* stays inline if multiple buttons are side by side */
+  margin: 1rem 0;         /* vertical spacing */
+}
+
+/* Optional: center the form/button */
+.doc form.external-btn-form {
+  text-align: center;    /* centers inline-block buttons */
+}
+
+/* Button spacing inside form (optional) */
+.doc form.external-btn-form button.hover-fill-btn {
+  display: inline-block; /* ensures margin and width behave properly */
+  margin: 0.25rem 0;     /* small spacing around button inside form */
+}
+
+
+/* Configure site footer. See footer-content.hbs for details. */
+
+footer.footer {
+  background-color: #fafafa !important;
+  color: #5d5d5d !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  padding: 0 !important;              /* override */
+  padding-left: 1rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;             
+}
+
+@media screen and (min-width: 1024px) {
+  .footer .footer-inner {
+    margin-left: 16rem !important;
+    padding: 0 !important;           /* override */
+    padding-left: 1rem !important;
+  }
+}
+
+.footer p {
+  padding: 0 !important;                 /* override */
+  margin: 0 !important;                  /* override */
+}
+
+/* END */

@@ -1,0 +1,148 @@
+<!--
+  File: script_viewer.html
+  Author: maxJOT, 10-DEC-2025
+          macJOT, 28-DEC-2025, added line-number support.
+  Purpose: Verify the specified file exists and display the content in a
+           new browser window using a code block and syntax highlighting.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta charset="UTF-8">
+<title>Script Viewer</title>
+
+<link rel="stylesheet" href="/_/css/coderunner.css">
+
+<style>
+  body {
+    margin: 1em;
+    background-color: #f9f3d8;
+  }
+
+  /* Error message styling */
+  #error-msg {
+    display: none;
+    color: red;
+    white-space: pre-wrap; /* preserve line breaks */
+    margin-bottom: 1em;
+  }
+
+  /* Loading message styling */
+  #loading-msg {
+    display: none;
+    color: black;
+    margin-bottom: 1em;
+  }
+  
+  /* Filename styling */
+  #filename {
+    display: none;
+    color: black;
+    margin: 1em;
+    margin-bottom: 1em;
+    font-family: monospace;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: bolder;
+  }
+</style>
+</head>
+<body>
+
+<!-- Error / info messages -->
+<p id="error-msg"></p>
+<p id="loading-msg">Loading...</p>
+
+<!-- Filename display -->
+<p id="filename"></p>
+
+<!-- Code block -->
+<pre id="pre-block"><code id="script-content"></code></pre>
+
+<!-- Modern Highlight.js + line-number plugin -->
+<script src="/_/js/highlight.min.js"></script>
+<script src="/_/js/highlightjs-line-numbers.min.js"></script>
+<script src="/_/js/coderunner.js"></script>
+
+<script>
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    const file = params.get('file');
+    const errorEl = document.getElementById('error-msg');
+    const loadingEl = document.getElementById('loading-msg');
+    const preEl = document.getElementById('pre-block');
+    const codeEl = document.getElementById('script-content');
+    const filenameEl = document.getElementById('filename');
+
+    // Step 1: Check if file parameter exists
+    if (!file) {
+        errorEl.textContent = "Error: no file specified.";
+        errorEl.style.display = "block";
+        preEl.style.display = "none";
+        loadingEl.style.display = "none";
+        filenameEl.style.display = "none";
+        return;
+    }
+
+    // Step 2: Show loading message only if file parameter exists
+    loadingEl.style.display = "block";
+
+    const filename = file.split('/').pop();
+    filenameEl.textContent = "Filename: " + filename;
+
+    // Language mapping for Highlight.js
+    const langMap = {
+        "sh": "bash", "bash": "bash",
+        "py": "python", "js": "javascript",
+        "json": "json", "html": "html",
+        "css": "css", "md": "markdown",
+        "c": "c", "cpp": "cpp", "java": "java"
+    };
+
+    const ext = filename.split('.').pop().toLowerCase();
+    const lang = langMap[ext];
+    const langClass = lang ? `language-${lang}` : '';
+
+    // Step 3: Fetch file content
+    fetch(file)
+        .then(resp => {
+            if (!resp.ok) throw new Error("File not found");
+            return resp.text();
+        })
+        .then(text => {
+            // Hide messages
+            errorEl.style.display = "none";
+            loadingEl.style.display = "none";
+
+            // Show filename
+            filenameEl.style.display = "block";
+
+            // Show code block with syntax highlighting
+            preEl.style.display = "block";
+            codeEl.textContent = text;
+            codeEl.className = langClass; // set language class
+
+            // Use modern API
+            hljs.highlightElement(codeEl);
+            hljs.lineNumbersBlock(codeEl);
+            highlightCharacters(codeEl);
+        })
+        .catch(err => {
+            // Hide loading message
+            loadingEl.style.display = "none";
+            filenameEl.style.display = "none";
+
+            // Show error message
+            errorEl.textContent = "Error: " + err.message;
+            errorEl.style.display = "block";
+
+            // Hide code block
+            preEl.style.display = "none";
+        });
+})();
+</script>
+
+</body>
+</html>

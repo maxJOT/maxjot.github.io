@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Antora Single Site Manager (ASSM) :: maxJOT</title>
+    <link rel="canonical" href="https://maxjot.github.io/maxJOT/antora/antora-manager.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/maxjot.css">
+  </head>
+  <body class="article">
+<div class="body">
+<div class="nav-container" data-component="maxJOT" data-version="">
+  <aside class="nav">
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Projects</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../downloads/wlaninfo.html">wlaninfo</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../downloads/speedbench.html">speedbench</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../downloads/smartmir.html">smartmir</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Bash</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../bash/bash-almanac.html">Almanac</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../bash/bash-proposals.html">Proposals</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Fluxlinux</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../fluxlinux/fl-downloads.html">Overview &amp; Downloads</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../fluxlinux/fl-user.html">User Guide</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Howto</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../howto/linux/howto-linux.html">Linux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../howto/macos/howto-macos.html">macOS</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../howto/windows/howto-windows.html">Windows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../misc/misc-o2.html">O2 Digitalisierungsbox</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">AI Reviews</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/wlaninfo-review.html">wlaninfo</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../license_maxjot.html">License</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+</div>
+  </aside>
+</div>
+
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">maxJOT</a></li>
+    <li><a href="antora-manager.html">Antora Single Site Manager (ASSM)</a></li>
+  </ul>
+</nav>
+<!-- Adding a search box -->
+  <div class="navbar-item search hide-for-print">
+    <div id="search-field" class="field">
+      <input id="search-input" type="text" placeholder="Search the site">
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Antora Single Site Manager (ASSM)</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Building and publishing an Antora site is deceptively complex. Beyond the generator itself, you must account for Node environments, Git safety, SSH credentials, playbook output paths, and the risk of unintentionally deleting Git history during rebuilds.</p>
+</div>
+<div class="paragraph">
+<p>The Antora Single Site Manager (ASSM) exists to make those risks explicit—and manageable.</p>
+</div>
+<div class="paragraph">
+<p>ASSM wraps the full Antora workflow into a single, defensive tool that prioritizes verification, reproducibility, and safety over shortcuts. It respects the Antora playbook as the source of truth, including custom output: directives, and adapts its behavior accordingly.</p>
+</div>
+<div class="paragraph">
+<p>Rather than requiring script edits, ASSM exposes supported configuration through validated user configuration files. Missing or invalid settings are detected early, with clear diagnostics and safe defaults.</p>
+</div>
+<div class="paragraph">
+<p>Key design goals:</p>
+</div>
+<div class="paragraph">
+<p>ASSM is written entirely in Bash to maximize portability and transparency. The script is fully inspectable, performs no hidden network activity, and never accesses the Internet unless explicitly requested by the user. A built-in self-integrity check helps detect accidental corruption caused by file transfers or copy-and-paste errors before any destructive operation is performed.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Preserve Git history across rebuilds and clean operations</p>
+</li>
+<li>
+<p>Respect Antora playbook output configuration</p>
+</li>
+<li>
+<p>Prevent accidental publishing or destructive updates</p>
+</li>
+<li>
+<p>Support both interactive and non-interactive workflows</p>
+</li>
+<li>
+<p>Make every critical operation visible and reversible</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>ASSM is designed for Antora users who value confidence over convenience and prefer transparent tooling they can audit and trust.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_livereload_and_http_server"><a class="anchor" href="#_livereload_and_http_server"></a>LiveReload and http-server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ASSM checks certain software dependencies but does not download or install any software. You need to install</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_examples"><a class="anchor" href="#_examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_antora_playbook_yml"><a class="anchor" href="#_antora_playbook_yml"></a>antora-playbook.yml</h3>
+<div class="listingblock">
+<div class="content">
+<pre>site:
+  title: maxJOT
+  start_page: maxJOT::index.adoc
+  url: https://maxjot.github.io
+
+content:
+  sources:
+    - url: .
+
+ui:
+  bundle:
+    url: ./default-ui/19-DEC-25
+  supplemental_files: ./supplemental-ui
+
+asciidoc:
+  attributes:
+    myfiles: /maxJOT/_attachments
+    myimages: ../_attachments
+    includesdir: maxJOT::includes
+    experimental: true
+
+antora:
+  extensions:
+  - '@antora/lunr-extension'</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_antora_yml"><a class="anchor" href="#_antora_yml"></a>antora.yml</h3>
+<div class="listingblock">
+<div class="content">
+<pre>name: maxJOT
+title: maxJOT
+version: ~
+nav:
+  - modules/ROOT/nav.adoc</pre>
+</div>
+</div>
+<div class="paragraph">
+<p></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_git_conf"><a class="anchor" href="#_git_conf"></a>git.conf</h3>
+<div class="listingblock">
+<div class="content">
+<pre>#====================================================================
+# Filespec:  /Users/bb/assm/maxjot.github.io/build/site/git.conf
+# Site Name: maxjot.github.io
+# Date:      25-Feb-26
+#====================================================================
+#
+# Set GIT_URL to your remote GitHub repository used to publish the site
+# (GitHub Pages), e.g.: "git@github.com:maxJOT/maxjot.github.io.git"
+GIT_URL="git@github.com:maxJOT/maxjot.github.io.git"
+
+# Set SITE_URL to the location where your site is published.
+SITE_URL="https://maxjot.github.io"
+
+# SSH_KEYPAIR defines the names of the SSH keys for passwordless
+# secure GitHub authentication (SSH user equivalence).
+# See GitHub Docs – SSH authentication, for more info.
+SSH_KEYPAIR=( id_ed25519 id_ed25519.pub )</pre>
+</div>
+</div>
+<div class="paragraph">
+<p></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_site_conf"><a class="anchor" href="#_site_conf"></a>site.conf</h3>
+<div class="listingblock">
+<div class="content">
+<pre>#====================================================================
+# Filespec:  /Users/bb/assm/maxjot.github.io/build/site/site.conf
+# Site Name: maxjot.github.io
+# Date:      25-Feb-26
+#====================================================================
+#
+# TCP port and TCP/IP address (hostname) of the http-server
+# providing the Antora Site on your local computer.
+# (usually this does not need to be changed.)
+HTTP_ADDR=192.168.2.10
+HTTP_PORT=8000
+
+# Node-LiveReload service monitors files for changes and
+# automatically reloads your web browser. This eliminates the
+# need to stop and start your local http-server between consecutive
+# site rebuilds. Set this to 'enable' or 'disable'.
+LIVERELOAD=enable
+
+# After generating the Antora site, automatically open your
+# web browser to view the site served by the local http-server.
+# Set this to 'yes' or 'no', or 'ask'.
+BROWSER_LAUNCH=ask
+
+# Service to use when publishing the Antora generated site.
+# Currently only 'github.io' has been implemented.
+SERVICE=github.io
+
+# OS specific script to initialize the node shell environment.
+NVM_INIT="/opt/local/share/nvm/init-nvm.sh"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_postproc_conf"><a class="anchor" href="#_postproc_conf"></a>postproc.conf</h3>
+<div class="listingblock">
+<div class="content">
+<pre>#!/usr/bin/env bash
+#====================================================================
+# Filespec:  /Users/bb/assm/maxjot.github.io/build/site/postproc.sh
+# Site Name: maxjot.github.io
+# Date:      25-Feb-26
+#====================================================================
+#
+# Requries $1: function to run, $2: function parameter.
+
+function demo { status_0=$1; }
+
+function publish {
+  # Requires : HTML file to process, : task.
+  # Temporarily remove livereload prior to publishing the site.
+  #
+  local workfile; workfile=$( mktemp )
+  case $2 in
+    modify) awk '/livereload\.js"&gt;&lt;\/script&gt;$/ &amp;&amp;
+                 $0 !~ /\{\{env\.HOSTNAME\}\}/ {
+                 print "&lt;!--"$0"--&gt;"; next } { print
+                 }' "$1" &gt; "${workfile}" || { status_0=error; return; } ;;
+    restore) awk '/^&lt;!--.*livereload\.js"&gt;&lt;\/script&gt;--&gt;$/ {
+                 sub(/^&lt;!--/,""); sub(/--&gt;$/,"") } { print
+                  }' "$1" &gt; "${workfile}" || { status_0=error; return; } ;;
+  esac
+  # If output differs, replace file.
+  cmp -s "$1" "${workfile}"
+  case $? in
+    0) rm -f "${workfile}"; status_0=none ;;
+    1) mv "${workfile}" "$1"; status_0=modified ;;
+    2) echo status_0=error ;;
+  esac
+}
+
+function callout {
+  # Requires $1: HTML file to process.
+  #
+  # Use !A-Z! markers, e.g. ! A! anywhere in .adoc documents as a
+  # reference badge, similar to Asciidoc callouts. Post-processing
+  # will convert these markers, e.g. ! A! <span class="coalpha" data-value="A"></span><b>(A)</b>, to letter-badges, just
+  # like Asciidoc callouts, but without any Asciidoc placement
+  # restrictions. The reference markers are invisible to the
+  # "Copy code" function. Color and appearance are defined in the
+  # maxJOT.css global stylesheet (.doc .coalpha).
+  #
+  if grep -q '![A-Z]!' "$1"; then
+    local workfile; workfile=$( mktemp )
+    awk '{ for (i = 65; i &lt;= 90; i++) { letter = sprintf("%c", i)
+           marker = "!" letter "!"
+           repl = "&lt;span class=\"coalpha\" " \
+           "data-value=\"" letter "\"&gt;&lt;/span&gt;&lt;b&gt;(" letter ")&lt;/b&gt;"
+           gsub(marker, repl) } print
+         }' "$1" &gt; "${workfile}" || { status_0=error; return; }
+    # If output differs, replace file.
+    cmp -s "$1" "${workfile}"
+    case $? in
+      0) rm -f "${workfile}"; status_0=none ;;
+      1) mv "${workfile}" "$1"; status_0=modified ;;
+      2) echo status_0=error ;;
+    esac
+  else
+    status_0=none
+  fi
+}
+$1 "$2" "$3"
+## END</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><span class="coalpha" data-value="A"></span><b>(A)</b> There must be no space between the exclamation marks and the letter.
+
+</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_folder_structure"><a class="anchor" href="#_folder_structure"></a>Folder Structure</h3>
+<div class="listingblock">
+<div class="content">
+<pre>/Users/dude/maxJOT
+├── maxjot.github.io
+│   ├── antora-playbook.yml
+│   ├── antora.yml
+│   ├── assm.sh
+│   ├── build
+│   ├── default-ui
+│   ├── modules
+│   ├── node_modules
+│   ├── package-lock.json
+│   ├── package.json
+│   └── supplemental-ui</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>/Users/dude/assm/
+├── maxjot.github.io
+│   └── build
+│       └── site
+│           ├── git.conf
+│           ├── postproc.sh
+│           ├── site.conf
+│           └── sshkeys.tar
+├── readme.txt
+└── yq</pre>
+</div>
+</div>
+<figure class="doc-image">
+  <a href="../_attachments/antora/assm/1.0/screen1.png" class="glightbox">
+    <img src="../_attachments/antora/assm/1.0/screen1.png" alt="screen1" width="300">
+  </a>
+  <figcaption>Menues</figcaption>
+</figure>
+<figure class="doc-image">
+  <a href="../_attachments/antora/assm/1.0/screen2.png" class="glightbox">
+    <img src="../_attachments/antora/assm/1.0/screen2.png" alt="screen2" width="300">
+  </a>
+  <figcaption>Analyze</figcaption>
+</figure>
+<figure class="doc-image">
+  <a href="../_attachments/antora/assm/1.0/screen3.png" class="glightbox">
+    <img src="../_attachments/antora/assm/1.0/screen3.png" alt="screen3" width="300">
+  </a>
+  <figcaption>Config</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_downloads_and_preview"><a class="anchor" href="#_downloads_and_preview"></a>Downloads and Preview</h2>
+<div class="sectionbody">
+<form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.0/assm.sh">
+  <button type="submit" class="hover-fill-btn">
+    <span>⬇️ Download assm.sh 1.0</span>
+  </button>
+</form>
+<form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.0/assm.sh">
+  <button type="submit" class="hover-fill-btn">
+    <span>🔍 Preview assm.sh 1.0</span>
+  </button>
+</form>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <p>
+      Copyright © 2025 
+      <img src="../../_/img/hash_small.png" alt="#" style="height: 1.2em; vertical-align: -2px;">
+      maxJOT. All rights reserved. Please see 
+      <a href="license_maxjot.html">license</a> for details.
+    </p>
+  </div>
+</footer><script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script id="site-clipboard" src="../../_/js/06-copy-to-clipboard.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<link rel="stylesheet" href="../../_/css/plyr.css">
+<script src="../../_/js/plyr.min.js"></script>
+<script id="glightbox" src="../../_/js/glightbox.min.js"></script>
+<script id="glightbox-init">
+  window.addEventListener('DOMContentLoaded', function () {
+    GLightbox({
+      selector: 'a.glightbox',
+      plyr: {
+        css: false,
+        js: false,
+        config: {
+          iconUrl: '../../_/img/plyr.svg',
+          blankVideo: '../../_/img/blank.mp4'
+        }
+      },
+      touchNavigation: true,
+      loop: false,
+      zoomable: true
+    });
+  });
+</script>
+<script src="../../_/js/vendor/lunr.js"></script>
+<script src="../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../.." data-snippet-length="100" data-stylesheet="../../_/css/search.css"></script>
+<script async src="../../search-index.js"></script>
+<!--<script src="http://192.168.2.10:35729/livereload.js"></script>-->
+  </body>
+</html>

@@ -151,13 +151,6 @@
 </aside>
 <article class="doc">
 <h1 class="page">Antora Single Site Manager (ASSM)</h1>
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>Does this work, do you think?</p>
-</div>
-</div>
-</div>
 <div class="sect1">
 <h2 id="_core_purpose"><a class="anchor" href="#_core_purpose"></a>Core Purpose</h2>
 <div class="sectionbody">
@@ -483,15 +476,15 @@
 <h2 id="_downloads_and_preview"><a class="anchor" href="#_downloads_and_preview"></a>Downloads and Preview</h2>
 <div class="sectionbody">
 <form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.0/assm.sh">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.1/assm.sh">
   <button type="submit" class="hover-fill-btn">
-    <span>⬇️ Download assm.sh 1.0</span>
+    <span>⬇️ Download assm.sh 1.1</span>
   </button>
 </form>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.0/assm.sh">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.1/assm.sh">
   <button type="submit" class="hover-fill-btn">
-    <span>🔍 Preview assm.sh 1.0</span>
+    <span>🔍 Preview assm.sh 1.11</span>
   </button>
 </form>
 </div>
@@ -550,9 +543,9 @@ nav:
 <div class="listingblock">
 <div class="content">
 <pre>#====================================================================
-# Filespec:  /Users/bb/assm/maxjot.github.io/build/site/git.conf
+# Filespec:  /Users/dude/assm/maxjot.github.io/build/site/git.conf
 # Site Name: maxjot.github.io
-# Date:      25-Feb-26
+# Date:      05-Mar-26
 #====================================================================
 #
 # Set GIT_URL to your remote GitHub repository used to publish the site
@@ -577,22 +570,16 @@ SSH_KEYPAIR=( id_ed25519 id_ed25519.pub )</pre>
 <div class="listingblock">
 <div class="content">
 <pre>#====================================================================
-# Filespec:  /Users/bb/assm/maxjot.github.io/build/site/site.conf
+# Filespec:  /Users/dude/assm/maxjot.github.io/build/site/site.conf
 # Site Name: maxjot.github.io
-# Date:      25-Feb-26
+# Date:      05-Mar-26
 #====================================================================
 #
 # TCP port and TCP/IP address (hostname) of the http-server
 # providing the Antora Site on your local computer.
 # (usually this does not need to be changed.)
-HTTP_ADDR=192.168.2.10
+HTTP_ADDR=localhost
 HTTP_PORT=8000
-
-# Node-LiveReload service monitors files for changes and
-# automatically reloads your web browser. This eliminates the
-# need to stop and start your local http-server between consecutive
-# site rebuilds. Set this to 'enable' or 'disable'.
-LIVERELOAD=enable
 
 # After generating the Antora site, automatically open your
 # web browser to view the site served by the local http-server.
@@ -617,44 +604,21 @@ NVM_INIT="/opt/local/share/nvm/init-nvm.sh"</pre>
 <div class="content">
 <pre>#!/usr/bin/env bash
 #====================================================================
-# Filespec:  /Users/bb/assm/maxjot.github.io/build/site/postproc.sh
+# Filespec:  /Users/dude/assm/maxjot.github.io/build/site/postproc.sh
 # Site Name: maxjot.github.io
-# Date:      25-Feb-26
+# Date:      05-Mar-26
 #====================================================================
 #
 # Requries $1: function to run, $2: function parameter.
 
 function demo { status_0=$1; }
 
-function publish {
-  # Requires : HTML file to process, : task.
-  # Temporarily remove livereload prior to publishing the site.
-  #
-  local workfile; workfile=$( mktemp )
-  case $2 in
-    modify) awk '/livereload\.js"&gt;&lt;\/script&gt;$/ &amp;&amp;
-                 $0 !~ /\{\{env\.HOSTNAME\}\}/ {
-                 print "&lt;!--"$0"--&gt;"; next } { print
-                 }' "$1" &gt; "${workfile}" || { status_0=error; return; } ;;
-    restore) awk '/^&lt;!--.*livereload\.js"&gt;&lt;\/script&gt;--&gt;$/ {
-                 sub(/^&lt;!--/,""); sub(/--&gt;$/,"") } { print
-                  }' "$1" &gt; "${workfile}" || { status_0=error; return; } ;;
-  esac
-  # If output differs, replace file.
-  cmp -s "$1" "${workfile}"
-  case $? in
-    0) rm -f "${workfile}"; status_0=none ;;
-    1) mv "${workfile}" "$1"; status_0=modified ;;
-    2) echo status_0=error ;;
-  esac
-}
-
 function callout {
   # Requires $1: HTML file to process.
   #
-  # Use !A-Z! markers, e.g. ! A! anywhere in .adoc documents as a
+  # Use !A-Z! markers, e.g. <span class="coalpha" data-value="A"></span><b>(A)</b> anywhere in .adoc documents as a
   # reference badge, similar to Asciidoc callouts. Post-processing
-  # will convert these markers, e.g. ! A! <span class="coalpha" data-value="A"></span><b>(A)</b>, to letter-badges, just
+  # will convert these markers, e.g. <span class="coalpha" data-value="A"></span><b>(A)</b>, to letter-badges, just
   # like Asciidoc callouts, but without any Asciidoc placement
   # restrictions. The reference markers are invisible to the
   # "Copy code" function. Color and appearance are defined in the
@@ -714,9 +678,12 @@ $1 "$2" "$3"
 │   └── build
 │       └── site
 │           ├── git.conf
+│           ├── keys
+│           │   ├── localhost_cert.pem
+│           │   ├── localhost_key.pem
+│           │   └── sshkeys.tar
 │           ├── postproc.sh
-│           ├── site.conf
-│           └── sshkeys.tar
+│           └── site.conf
 ├── readme.txt
 └── yq</pre>
 </div>

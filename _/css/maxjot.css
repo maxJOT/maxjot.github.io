@@ -138,8 +138,8 @@
 .doc pre.highlight > code,
 .doc .listingblock pre:not(.highlight) {
   background: #e7eff8;
-  font-family: monospace, serif;
-  font-size: 12px;
+  /* font-family: monospace, serif;
+  font-size: 12px; */
   border: 1px solid #b6c8e0;
   border-radius: 0.4em;
   overflow-x: auto;
@@ -148,8 +148,8 @@
 .doc .literalblock pre {
   background: #f5f5f5 !important;   /* light neutral background */
   color: #000 !important;           /* readable black text */
-  font-family: monospace, serif;    /* monospace */
-  font-size: 12px;
+  /* font-family: monospace, serif;
+  font-size: 12px; */
   border-radius: 0.25em;
   padding: 0.75em;
   overflow-x: auto;

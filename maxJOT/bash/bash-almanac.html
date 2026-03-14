@@ -24,8 +24,26 @@
     <a class="nav-link" href="../index.html">Home</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <span class="nav-text">&#160;</span>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Projects</span>
+    <span class="nav-text">Antora</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../antora/antora-manager.html">Antora Site Manager</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../antora/antora-howto.html">Antora How-To</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="bash-almanac.html">Bash Almanac</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Bash In-Action</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../downloads/wlaninfo.html">wlaninfo</a>
@@ -38,19 +56,12 @@
   </li>
 </ul>
   </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Bash</span>
+    <span class="nav-text">Bash Insider</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="bash-almanac.html">Almanac</a>
-  </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="bash-proposals.html">Proposals</a>
+    <a class="nav-link" href="bash-proposals.html">Bash Variable Naming</a>
   </li>
 </ul>
   </li>
@@ -91,6 +102,18 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reviews/wlaninfo-review.html">wlaninfo</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/almanac-term_init-review.html">Almanac Colors &amp; Styles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/almanac-box-review.html">Almanac Boxes &amp; Borders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/almanac-args-review.html">Almanac Args &amp; Options</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/almanac-get_reply-review.html">Almanac User Input Control</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -112,15 +135,12 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">maxJOT</a></li>
-    <li>Bash</li>
-    <li><a href="bash-almanac.html">Almanac</a></li>
+    <li><a href="bash-almanac.html">Bash Almanac</a></li>
   </ul>
 </nav>
 <!-- Adding a search box -->
-  <div class="navbar-item search hide-for-print">
-    <div id="search-field" class="field">
-      <input id="search-input" type="text" placeholder="Search the site">
-    </div>
+  <div id="search-field" class="field">
+    <input id="search-input" type="text" placeholder="Search the site">
   </div>
 </div>
 
@@ -134,10 +154,13 @@
 <h2 id="_introduction"><a class="anchor" href="#_introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Here you will find advanced Bash functions and coding examples for building professional CLI applications. These functions provide turnkey solutions to common tasks such as prompting for user input, drawing boxes around text, handling colors, and more.</p>
+<p>The Bash Almanac is an engineering-focused reference for building serious shell scripts with GNU Bash. It provides a curated collection of reusable code designed to help developers build robust command-line tools and professional CLI applications.</p>
 </div>
 <div class="paragraph">
-<p>Each example is designed to be practical and reusable — simply copy and paste the function into your script to get reliable, production-ready results.</p>
+<p>Inside, you will find practical solutions to common but non-trivial scripting tasks: prompting and validating user input, rendering colored terminal output compatible with both the Linux console and remote terminals, drawing boxes around text using Unicode line-drawing, parsing command-line options and arguments, and implementing other features typically expected from advanced command-line programs.</p>
+</div>
+<div class="paragraph">
+<p>All examples and Bash functions have been tested under Linux and macOS. Some features require a minimum Bash version, which is noted where relevant. The snippets are self-contained and copy-and-paste friendly so they can be quickly integrated into your own scripts, giving you reliable, production-ready building blocks for sophisticated shell tooling.</p>
 </div>
 </div>
 </div>
@@ -145,7 +168,7 @@
 <h2 id="_colors_and_styles"><a class="anchor" href="#_colors_and_styles"></a>Colors and Styles</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>term_init defines reusable foreground and background colors, cursor movement, and other control sequence variables. It adjusts terminal color palette mappings, adding colors such as orange for improved visibility across Linux VGA consoles, SSH sessions, and modern terminal emulators. The function includes a demo mode that displays all compatible color options and a cleanup mode that restores the original shell environment if the script was source-executed.</p>
+<p>term_init defines reusable foreground and background colors, cursor movement, and other control sequence variables. It adjusts terminal color palette mappings, adding colors such as orange for improved visibility across Linux VGA consoles, SSH sessions, and modern terminal emulators. The function includes a demo mode that displays all compatible color options and a cleanup mode that restores the original shell environment if the script needs to be source-executed.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -251,38 +274,26 @@ function term_init {
   esac
 }
 
-
-# Initialize
-term_init
-
-term_init demo
-
-# More examples
-echo
-echo "${B3}${R4}Yellow text, blue background${T0}"
-echo "${BD}bold ${B1}red ${B2}green ${B3}yellow ${C3}orange${T0}"
-echo
-echo "${BL}blink${T0} and ring my bell(RG)${RG}."
-echo
-echo "Demonstrating cursor postion and line erase:"
-echo "The ${BD}rabbit${T0} jumps over the ${C3}fox${T0} and"
-echo -n "${B2}escapes${T0}." &amp;&amp; sleep 2
-echo -n "   ${U1}${EL}"   # Position the cursor above the current
-sleep 2                   # line and erase the reminder of the line.
-echo; echo "${U1}${ED}"   # Erase until end of screen.
-
-# Do not taint the current shell environment.
-# Only necessary if the script has been source executed.
-term_init cleanup
-
 ## END</code></pre>
 </div>
 </div>
+<form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/term_init_example.sh">
+  <button type="submit" class="hover-fill-btn">
+    <span>🔍 Preview term_init_example</span>
+  </button>
+</form>
+<form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/term_init_suite.zip">
+  <button type="submit" class="hover-fill-btn">
+    <span>⬇️ Download term_init suite</span>
+  </button>
+</form>
 <figure class="doc-image">
-  <a href="/maxJOT/_attachments/almanac/term_init.mp4" class="glightbox" data-type="video">
-    <img src="/maxJOT/_attachments/almanac/term_init.png" alt="term_init demo" width="300">
+  <a href="/maxJOT/_attachments/almanac/term_init_example.mp4" class="glightbox" data-type="video">
+    <img src="/maxJOT/_attachments/almanac/term_init_example.png" alt="" width="300">
   </a>
-  <figcaption>term-init demo</figcaption>
+  <figcaption>term_init_example demo</figcaption>
 </figure>
 </div>
 </div>
@@ -330,7 +341,7 @@ function box {
   #          box r --bottom
   #
   local maxlen background indent fb t0
-  local box_top box_bottom box1 box2 box3 box4 box5 box6 box7 box8
+  local box_top box_middle box_bottom box1 box2 box3 box4 box5 box6 box7 box8
   t0=$( tput sgr0 )
   maxlen=65
   box1=$'\u250C' box2=$'\u2500' box3=$'\u2510' box4=$'\u2502'
@@ -382,54 +393,26 @@ function box {
   fi
 }
 
-# Examples:
-
-echo
-box r --top                                # Draw the top of the box.
-box r "The rabbit jumps over the fox" 1    # End with 1 to split long lines.
-box r "and escapes."
-box r --middle                             # Draw a horizontal line
-box r "http://maxjot.github.io/maxJOT/bash/bash-almanac.html"
-box r --bottom                             # Draw the box bottom line.
-
-echo
-YL=$( tput bold; tput setaf 3; tput setab 4 ) # Yellow/blue
-GN=$( tput bold; tput setaf 2; tput setab 4 ) # Green/blue
-RD=$( tput bold; tput setaf 1; tput setab 4 ) # Red/blue
-function struct { box 4 "${YL}$1" 1; box 4 "${GN}$2" 1; box 4 "${RD}$3"; }
-text1=$( printf "%10s" yellow )
-text2=$( printf "%10s" green )
-text3=$( printf "%10s" red )
-box 4 --top
-box 4
-struct "${text1}" "${text2}" "${text3}"
-box 4
-box 4 --bottom
-
-echo
-mute on # Disable keyobard interference/feedback.
-box 0 --top
-box 0
-box 0 --bottom
-# Move the cursor into the box (up 2 lines)
-tput cuu1; tput cuu1
-for ((i = 5 ; i &gt;= 1 ; i--)); do
-  # End box function with 2
-  # to move the cursor to the beginning of the line.
-  box 0 "Continue in $i second(s)..." 2
-  sleep 1
-done
-mute off # Restore original terminal attributes.
-echo; echo; echo
-
 ## END</code></pre>
 </div>
 </div>
+<form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/box_example.sh">
+  <button type="submit" class="hover-fill-btn">
+    <span>🔍 Preview box_example</span>
+  </button>
+</form>
+<form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/box_suite.zip">
+  <button type="submit" class="hover-fill-btn">
+    <span>⬇️ Download box suite</span>
+  </button>
+</form>
 <figure class="doc-image">
-  <a href="/maxJOT/_attachments/almanac/box.mp4" class="glightbox" data-type="video">
-    <img src="/maxJOT/_attachments/almanac/box.png" alt="box demo" width="300">
+  <a href="/maxJOT/_attachments/almanac/box_example.mp4" class="glightbox" data-type="video">
+    <img src="/maxJOT/_attachments/almanac/box_example.png" alt="" width="300">
   </a>
-  <figcaption>box demo</figcaption>
+  <figcaption>box_example demo</figcaption>
 </figure>
 </div>
 </div>
@@ -522,45 +505,55 @@ function get_reply {
   done
 }
 
-# Examples
-
-echo
-get_reply "Press any key to continue..."
-
-echo
-get_reply "Please answer (Y)es or (N)o:" "N Y"
-case "${REPLY}" in
-  Y) echo Well done, you hit the letter y. ;;
-  N) echo You hit the letter n or Return to accept the default. ;;
-  *) echo Invalid response. ;;
-esac
-
-echo
-echo get_reply menu demo
-echo
-echo "(1) Sample 1   (2) Sample 2   (3) Sample 3   (E) Exit"
-get_reply "Please choose a menu option:" "E 1 2 3"
-STATUS=$?
-case "${REPLY}" in
-  1) echo "You choose #1" ;;
-  2) echo "You choose #2" ;;
-  3) echo "You choose #3" ;;
-  E) echo "Exit..." ;;
-esac
-case $STATUS in
-  0) echo all went well ;;
-  3) echo you failed to choose a valid option ;;
-esac
-echo
-
 ## END</code></pre>
 </div>
 </div>
+<form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/get_reply_example.sh">
+  <button type="submit" class="hover-fill-btn">
+    <span>🔍 Preview get_reply_example</span>
+  </button>
+</form>
+<form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/get_reply_suite.zip">
+  <button type="submit" class="hover-fill-btn">
+    <span>⬇️ Download get_reply suite</span>
+  </button>
+</form>
 <figure class="doc-image">
-  <a href="/maxJOT/_attachments/almanac/get_reply.mp4" class="glightbox" data-type="video">
-    <img src="/maxJOT/_attachments/almanac/get_reply.png" alt="get_reply demo" width="300">
+  <a href="/maxJOT/_attachments/almanac/get_reply_example.mp4" class="glightbox" data-type="video">
+    <img src="/maxJOT/_attachments/almanac/get_reply_example.png" alt="" width="300">
   </a>
   <figcaption>get_reply demo</figcaption>
+</figure>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_arguments_and_options"><a class="anchor" href="#_arguments_and_options"></a>Arguments and Options</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Parsing command line arguments in a flexible and user-friendly way can quickly become complex when aiming for professional-grade behavior. Beyond basic option handling, a robust parser must manage option bundles, parameterized options, mutual exclusivity rules, detailed diagnostics, and meaningful error reporting. This implementation is designed to be order-agnostic and tolerant of redundant options, allowing users to supply arguments in any sequence while gracefully handling repeated specifications without unnecessary failures.</p>
+</div>
+<div class="paragraph">
+<p>The demonstration script serves as a practical reference for building structured argument processing logic in Bash. It is not intended to enforce a rigid parsing framework, but rather to illustrate one possible professional approach that can be adapted, simplified, or extended according to application requirements. Developers may modify the logic to suit specific workflows while preserving the principles of clarity, validation, and predictable behavior.</p>
+</div>
+<form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/args_example.sh">
+  <button type="submit" class="hover-fill-btn">
+    <span>🔍 Preview args_example</span>
+  </button>
+</form>
+<form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/args_example_suite.zip">
+  <button type="submit" class="hover-fill-btn">
+    <span>⬇️ Download args_example suite</span>
+  </button>
+</form>
+<figure class="doc-image">
+  <a href="/maxJOT/_attachments/almanac/args_example.mp4" class="glightbox" data-type="video">
+    <img src="/maxJOT/_attachments/almanac/args_example.png" alt="" width="300">
+  </a>
+  <figcaption>args_example demo</figcaption>
 </figure>
 </div>
 </div>
@@ -601,9 +594,9 @@ echo
     });
   });
 </script>
-<script src="../../_/js/vendor/lunr.js"></script>
+  <script src="../../_/js/vendor/lunr.js"></script>
 <script src="../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../.." data-snippet-length="100" data-stylesheet="../../_/css/search.css"></script>
 <script async src="../../search-index.js"></script>
-<!--<script src="http://192.168.2.10:35729/livereload.js"></script>-->
+  <script src="../../_/js/search-button.js"></script>
   </body>
 </html>

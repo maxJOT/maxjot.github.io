@@ -10,14 +10,13 @@
 #           copies. https://maxjot.github.io/maxJOT/license_maxjot.html
 # Purpose:  Automate common Antora site tasks while minimizing potential
 #           pitfalls. This script provides a menu to build, publish, verify,
-#           and restore GitHub credentials, and can also run an HTTP server
-#           with Livereload. Command-line options allow quick access to
-#           individual tasks.
+#           and restore GitHub credentials. Command-line options allow quick
+#           access to individual menu options.
 #============================================================================
 
 IAM=( ${BASH_SOURCE[0]##*/} 1.0 )
 
-function err1 {
+function err1 { #############################################################
   # Error message. Takes $1 (lineno) $2 (msg). $3 $4 $5 are optional.
   #
   local B1=$( tput bold; tput setaf 1)
@@ -41,7 +40,7 @@ if [[ $? -eq 0 ]]; then
   return 1
 fi
 
-function checksum {
+function checksum { #########################################################
   # The following aims to protect from installation or download corruption.
   # Use the name of the script as argument to recalculate checksum.
   #
@@ -66,7 +65,7 @@ function checksum {
 
 checksum "$1"
 
-function msg1 {
+function msg1 { #############################################################
   # Screen to display when YAML parser is required.
   # Requires: $PLAYBOOK, $SITE_USER_DIR
   #
@@ -89,7 +88,7 @@ function msg1 {
   umute
 }
 
-function file_header {
+function file_header { ######################################################
   printf '%s\n' \
   "#====================================================================" \
   "# Filespec:  ${outfile}" \
@@ -99,7 +98,7 @@ function file_header {
   "#"
 }
 
-function readme_txt {
+function readme_txt { #######################################################
   # Contents of readme.txt.
   #
   local att=$'!'
@@ -123,23 +122,26 @@ function readme_txt {
   Defines configurable options for Node services, Antora Single Site
   Manager internals, and OS-specific Node Manager initialization.\n
   -------------------------------------------------------------------------\n
+  postproc.sh:
+  Post-processing tasks required by the Antora build and publish functions.
+  It addresses modifes html files to enable custom number-badge feature for
+  reference markers.\n
+  -------------------------------------------------------------------------\n
+  keys (directory):
   sshkeys.tar:
   Backup of the last working GitHub public and private SSH keys used
-  for passwordless authentication.\n
-  -------------------------------------------------------------------------\n
+  for passwordless authentication.
+  cert.pem, key.pem:
+  Clipboard API (copy code) requires a secure context (HTTPS).\n
+  -------------------------------------------------------------------------\n 
   .git (hidden directory):
   When publishing via GIT, the .git directory inside the Antora-generated
   site is a symlink to this directory. This allows the site output to be
   removed and rebuilt without losing GIT history.\n
-  -------------------------------------------------------------------------\n
-  postproc.sh:
-  Post-processing tasks required by the Antora build and publish functions.
-  It addresses LiveReload when publishing the generated site, and enables a
-  custom number-badge feature for reference markers.
   "
 }
 
-function site_conf {
+function site_conf { ########################################################
   # Contents of site_conf.
   #
   local nvminit n=$'\n'
@@ -154,11 +156,6 @@ function site_conf {
   "# (usually this does not need to be changed.)" \
   "HTTP_ADDR=localhost" \
   "HTTP_PORT=8000${n}" \
-  "# Node-LiveReload service monitors files for changes and" \
-  "# automatically reloads your web browser. This eliminates the" \
-  "# need to stop and start your local http-server between consecutive" \
-  "# site rebuilds. Set this to 'enable' or 'disable'." \
-  "LIVERELOAD=enable ${n}" \
   "# After generating the Antora site, automatically open your" \
   "# web browser to view the site served by the local http-server." \
   "# Set this to 'yes' or 'no', or 'ask'." \
@@ -170,7 +167,7 @@ function site_conf {
   "NVM_INIT=\"${nvminit}\""
 }
 
-function git_conf {
+function git_conf { #########################################################
   # Contents of git.conf
   #
   local n=$'\n'
@@ -188,7 +185,7 @@ function git_conf {
   "SSH_KEYPAIR=( id_ed25519 id_ed25519.pub )"
 } 
 
-function postproc_sh {
+function postproc_sh { ######################################################
   # Contents of postproc.sh
   #
   local n=$'\n' a=$'!' a1=$'![1-9][0-9]\\?!' a2=$'                 '
@@ -197,22 +194,7 @@ function postproc_sh {
   file_header
   printf '%s\n' \
   '# Requries $1: function to run, $2: function parameter.' \
-  "${n}function demo { status_0=\$1; }${n}${n}function publish {" \
-  "  # Requires $1: HTML file to process, $2: task." \
-  "  # Temporarily remove livereload prior to publishing the site." \
-  "  #${n}  local workfile; workfile=\$( mktemp )${n}  case \$2 in" \
-  "    modify) awk '/livereload\.js\"><\/script>$/ &&" \
-  "                 \$0 ${a}~ /\{\{env\.HOSTNAME\}\}/ {" \
-  '                 print "<!--"$0"-->"; next } { print' \
-  "${a2}}' \"\$1\" > \"\${workfile}\" || { status_0=error; return; } ;;" \
-  "    restore) awk '/^<${a}--.*livereload\.js\"><\/script>-->\$/ {" \
-  '                 sub(/^<!--/,""); sub(/-->$/,"") } { print' \
-  "${a2} }' \"\$1\" > \"\${workfile}\" || { status_0=error; return; } ;;" \
-  "  esac${n}  # If output differs, replace file." \
-  "  cmp -s \"\$1\" \"\${workfile}\"${n}  case \$? in" \
-  '    0) rm -f "${workfile}"; status_0=none ;;' \
-  '    1) mv "${workfile}" "$1"; status_0=modified ;;' \
-  "    2) echo status_0=error ;;${n}  esac${n}}${n}${n}function callout {" \
+  "${n}function demo { status_0=\$1; }${n}${n}function callout {" \
   "  # Requires \$1: HTML file to process.${n}  #" \
   '  # Use !A-Z! markers, e.g. !A! anywhere in .adoc documents as a' \
   "  # reference badge, similar to Asciidoc callouts. Post-processing" \
@@ -237,7 +219,7 @@ function postproc_sh {
   "    status_0=none${n}  fi${n}}${n}\$1 \"\$2\" \"\$3\"${n}## END"
 }
 
-function download_yq {
+function download_yq { ######################################################
   # Download yq depending on OS and architecture.
   #
   local os=$( uname -s ) arch=$( uname -m )
@@ -267,7 +249,7 @@ function download_yq {
   esac
 }
 
-function get_build_site_dir {
+function get_build_site_dir { ###############################################
   # YML is complex and difficult to query without a special tool.
   # No tool needed if no output specified (default build/site).
   # Requires $DOCS_SITE_DIR $SITE_USER_DIR $PATH $PLAYBOOK
@@ -329,7 +311,7 @@ function get_build_site_dir {
   fi
 }
 
-function err2 {
+function err2 { #############################################################
   # Empty or missing variable.
   #
   err1 ${LINENO} "Missing or empty variable." \
@@ -338,7 +320,7 @@ function err2 {
   echo; exit 1
 }
 
-function err3 {
+function err3 { #############################################################
   # Error in variable content.
   #
   err1 ${LINENO} "Error in variable." \
@@ -347,7 +329,7 @@ function err3 {
   echo; exit 1
 }
 
-function get_git_conf {
+function get_git_conf { #####################################################
   # Create git.conf if missing, then source git.conf and
   # verify the variables. Requires $SITE_USER_DIR
   # 
@@ -362,12 +344,12 @@ function get_git_conf {
   done
 }
 
-function get_site_conf {
+function get_site_conf { ####################################################
   # Create site.conf if missing, then source site.conf and
   # verify the variables. Requires $SITE_USER_DIR
   #
   local nvminit outfile="${SITE_USER_DIR}/site.conf"
-  local item var_array=( HTTP_PORT HTTP_ADDR LIVERELOAD
+  local item var_array=( HTTP_PORT HTTP_ADDR
                          BROWSER_LAUNCH SERVICE NVM_INIT )
   # Create if missing.
   [[ ! -e ${outfile} ]] && site_conf > "${outfile}"
@@ -376,9 +358,6 @@ function get_site_conf {
   for item in "${var_array[@]}"; do
     [[ -z ${!item} ]] && err2
     case ${item} in
-      LIVERELOAD) [[ ${!item,,} == enab* ]] \
-        && LIVERELOAD=enable || LIVERELOAD=disable
-        continue ;;
       BROWSER_LAUNCH)
         case ${!item,,} in
           yes) BROWSER_LAUNCH=yes ;;
@@ -398,7 +377,28 @@ function get_site_conf {
   done
 } 
 
-function init_variables {
+function check_certificates { ###############################################
+  # Clipboard API (copy code) requires a secure context (HTTPS).
+  # Requires $SITE_USER_DIR $HTTP_ADDR
+  local cert=${SITE_USER_DIR}/keys/
+  mkdir -p ${SITE_USER_DIR}/keys
+  if [[ ! -f ${SITE_USER_DIR}/keys/${HTTP_ADDR}_key.pem ]] || \
+    [[ ! -f ${SITE_USER_DIR}/keys/${HTTP_ADDR}_cert.pem ]]; then
+    openssl req -x509 -newkey rsa:2048 -nodes \
+      -keyout "${SITE_USER_DIR}/keys/${HTTP_ADDR}_key.pem" \
+      -out "${SITE_USER_DIR}/keys/${HTTP_ADDR}_cert.pem" \
+      -days 3650 -subj "/CN=${HTTP_ADDR}" \
+      -addext "subjectAltName=DNS:${HTTP_ADDR}" > /dev/null 2>&1
+  fi
+  if [[ ! -f ${SITE_USER_DIR}/keys/${HTTP_ADDR}_key.pem ]] || \
+    [[ ! -f ${SITE_USER_DIR}/keys/${HTTP_ADDR}_cert.pem ]]; then
+    err1 ${LINENO} "Error creating self-signed TLS certificate." \
+      "Directory: ${SITE_USER_DIR}/keys"
+    exit; exit 1
+  fi
+}
+
+function init_variables { ###################################################
   # Initialize environment and internal variables for Antora site
   # deployment. Creates $SITE_USER_DIR and appropriate readme.txt
   # as well as creating git.conf and site.conf.
@@ -409,7 +409,7 @@ function init_variables {
   # directory and use the parent directory name as SITE_NAME. 
   if [[ ! -f ${PLAYBOOK} ]] || \
     [[ -L ${PLAYBOOK} ]]; then
-    err1 ${LINENO} "Invalid working directory". \
+    err1 ${LINENO} "File not found." \
       "File: \`${PLAYBOOK}' not found in current directory."
     echo; exit 1
   fi
@@ -428,7 +428,7 @@ function init_variables {
     err1 ${LINENO} "Cannot create directory." \
       "Directory: ${SITE_USER_DIR}"
     echo; exit 1
-  fi
+  fi  
   case $( uname -s ) in
     Darwin) OS=Darwin ;;
      Linux) OS=Linux ;;
@@ -445,6 +445,8 @@ function init_variables {
     postproc_sh > "${outfile}"
     chmod u+x "${outfile}"
   fi
+  # Manage web browser self-signed certificates.
+  check_certificates
   # Internal variables.
   GIT_SITE_DIR="${BUILD_SITE_DIR}/.git" # Symlink inside site.
   GIT_SAFE_DIR="${SITE_USER_DIR}/.git" # Actual Git repo.
@@ -454,11 +456,9 @@ function init_variables {
   BUNDLE_SRC="https://gitlab.com/antora/antora-ui-default.git"
   GIT_MIN=2.52
   HTTP_LOG=/tmp/http_server.log
-  LIVERLD_PORT=35729 # Default, do not change.
-  LIVERLD_LOG=/tmp/livereload.log
 }
 
-function term_init {
+function term_init { ########################################################
   # Assign useful terminal sequences that are compatible with any
   # 256-color VGA terminal, if available. There is, however, no
   # ill-effect if the terminal does not - in which case variables 
@@ -541,10 +541,10 @@ if [[ ! ${BASH_VERSINFO[0]:-0} -ge 4 ]]; then
   echo; exit 1
 fi
 
-function help() {
+function help { #############################################################
   echo "Usage:
-  antora_manager
-  antora_manager [OPTIONS] [MENU_OPTION]"
+  ${IAM}
+  ${IAM} [OPTIONS] [MENU_OPTION]"
   echo
   echo "Options:
   -c, --config      Show configuration variables.
@@ -553,21 +553,24 @@ function help() {
   -p, --publish     Select MENU_OPTION from the Publish menu.
   -v, --version     Show version and licensing info."
   echo
-  echo "Command line arguments are optional. Do not specify any"
-  echo "options to start the program in non-menu mode."
-  echo 
   echo "Examples:
-  antora_manager         Interactive Mode
-  antora_manager -m 1    Select option 1 from the Main menu.
-  antora_manager -cp 3   Select option 3 from the Publish menu and
-                         display current configuration variables."
+  ${IAM}           Show Menus (default).
+  ${IAM} -m 1      Select option 1 from the Main menu.
+  ${IAM} -cp 3     Select option 3 from the Publish menu and
+                    display the configuration screen."
   echo
   echo "Description:
-  Manage Antora builds and publications via a menu-driven interface.
-  Alternatively, specify the menu option from command line." 
+  The Antora Single Site Manager streamlines Antora site development
+  and manages the complete workflow from building to publishing. It
+  offers simple menu options to automate complex site management tasks,
+  preventing common configuration pitfalls, including Git deployment.
+
+  ASSM creates a configuration directory under the user's home directory
+  to store customization options for HTTPS settings, security keys, and
+  Git specifics. See readme.txt and use the -c option for details."
 }
 
-function version() {
+function version { ##########################################################
   echo "Version ${IAM[1]}"
   echo
   echo "Copyright (c) 2024-2026 maxJOT. All Rights Reserved."
@@ -575,7 +578,7 @@ function version() {
   echo "copies. https://maxjot.github.io/maxJOT/license_maxjot.html"
 }
 
-function mute {
+function mute { #############################################################
   # Hide cursor, disable terminal echo, disable ctrl/s/q/c/d.
   # Stop user/keyboard interference while rendering screen output.
   #
@@ -585,29 +588,15 @@ function mute {
   printf ${HC}
 } 
 
-function umute {
+function umute { ############################################################
   # Restore terminal state prior to mute().
   #
   stty ${sav_0} </dev/tty
   printf ${RC}
 }
 
-function get_reply {
-  # Arguments:
-  #   $1=menu prompt.
-  #   $2=valid menu options (optional).
-  # Examples:  
-  #   get_reply "Press menu option:" "E 1 2 3 4"
-  #   get_reply "Press any key to continue..."
-  #   get_reply "Hit (y)es or (n)o, or (a)bort:" "Y N A"
-  #
-  # Note: $2 is optional. When specified, the first item
-  # is automatically shown as the default answer. e.g. [E].
-  # Any leading indentation in $1 automatically aligns the feedback.
-  #
-  # `read -t 0.1)' causes an invalid timeout specification error
-  # if not Bash 4 or later. The function will still work, but not
-  # flushing the keyboard buffer. Just generate a warning.
+function get_reply { ########################################################
+  # Arguments: $1=prompt $2=valid options (optional).
   #
   local tries=0 option prompt answer indent
   local sav=$(stty -g </dev/tty)
@@ -615,7 +604,7 @@ function get_reply {
   local b1=$(tput bold; tput setaf 1) t0=$(tput sgr0)
   #
   if [[ ! ${BASH_VERSINFO:-0} -ge 4 ]]; then
-    printf "\n${b1} \`show_menu' requires Bash 4 or later.${T0}\n"
+    printf "\n${b1} \`get_reply' requires Bash 4 or later.${t0}\n"
   fi
   # Restore cursor and cleanup prior to exiting the menu.
   opt_cleanup() { 
@@ -670,21 +659,12 @@ function get_reply {
   done
 }
 
-function box {
-  # $1 = Color scheme.
-  # $2 = Text.
-  # $3 = Format (optional):
-  #      0 = standard newline (default).
-  #      1 = do not move the cursor.
-  #      2 = move the cursor to the beginning of the line (\r).
-  # Examples: box r box_top
-  #           box r "Box Title"
-  #           box r box_middle
-  #           box r "the rabbit jumps over" 1
-  #           box r "the fox and escapes."
-  #           box r
-  #           box r "... and they lived happily ever after."
-  #           box r box_bottom
+function box { ##############################################################
+  # Arguments: $1 = Color scheme $2 = Text 
+  #            $3 = Format (optional):
+  #                 0 = standard newline (default).
+  #                 1 = do not move the cursor.
+  #                 2 = move the cursor to the beginning of the line (\r).
   #
   local maxlen background indent fb t0
   local box_top box_bottom box1 box2 box3 box4 box5 box6 box7 box8
@@ -734,7 +714,7 @@ function box {
   fi
 }
 
-function shortvar {
+function shortvar { #########################################################
   # Shorten a $1 so it does not exceed $2 length.
   # $1=string (required) $2=max length, default 40
   # Returns: shortvar_0 (global)
@@ -748,7 +728,7 @@ function shortvar {
   fi
 }
 
-function approve_config {
+function approve_config { ###################################################
   # Required functions: term_init, box, get_reply, init_variables.
   #
   init_variables
@@ -776,10 +756,7 @@ function approve_config {
   orange "HTTP_PORT      " "${B3}${HTTP_PORT}"
   orange "HTTP_ADDR      " "${B3}${HTTP_ADDR}"
   orange "HTTP_LOG       " "${HTTP_LOG}"
-  [[ ${LIVERELOAD} == enable ]] \
-    && orange "LIVERLD_LOG    " "${LIVERLD_LOG}"
   orange "BROWSER_LAUNCH " "${B3}${BROWSER_LAUNCH}"
-  orange "LIVERELOAD     " "${B3}${LIVERELOAD}"
   box 4 box_middle
   shortvar "${SITE_USER_DIR}" 47
   box 4 "Edit files in ${B3}${shortvar_0}" 
@@ -794,7 +771,7 @@ function approve_config {
   fi 
 }
 
-function version_compare {
+function version_compare { ##################################################
   # Requries: $1=any verison string, e.g. 2.52.0
   #           $2=any version string, e.g. 2.54
   # Returns 0 if $1 is higher or equal than $2
@@ -806,16 +783,15 @@ function version_compare {
              } exit 0 }' <<< $1$'\n'$2
 }
 
-function check_git {
+function check_git { ########################################################
   # Check git version requirements and githup passwordless SSH.
   # Attempt recovery of archived keys if possible.
   #
-  if [[ ! -e "${SITE_USER_DIR}/sshkeys.tar" ]]; then
+  if [[ ! -e "${SITE_USER_DIR}/keys/sshkeys.tar" ]]; then
     function yellow { box 0 "${B3}$1" 1; box 0 "$2"; }
     box 0 box_top
     yellow "WARNING!" "No backup exists."
     yellow "        " "Automatic repair/recovery is unavailable."
-    yellow "        " "${SITE_USER_DIR}/sshkeys.tar"
     box 0 box_bottom
     unset -f yellow
     echo
@@ -841,12 +817,13 @@ function check_git {
   if [[ ! -e ~/.ssh/${SSH_KEYPAIR[0]} ]] \
      || [[ ! -e ~/.ssh/${SSH_KEYPAIR[1]} ]]; then
     mkdir -p ~/.ssh
-    ( cd ~/.ssh;  tar xf "${SITE_USER_DIR}/sshkeys.tar" > /dev/null 2>&1 )
+    ( cd ~/.ssh
+      tar xf "${SITE_USER_DIR}/keys/sshkeys.tar" > /dev/null 2>&1 )
     if [[ $? -eq 0 ]]; then
       echo "${BD}Missing Github login keys restored successfully.${T0}"
     else
       err1 ${LINENO} "Backup not found." \
-        "File: ${SITE_USER_DIR}/sshkeys.tar" \
+        "File: ${SITE_USER_DIR}/keys/sshkeys.tar" \
         "Error restoring missing Github login keys."
       echo; exit 1
     fi
@@ -854,17 +831,19 @@ function check_git {
   echo "GIT URL: ${B6}${GIT_URL}${T0}" 
   git ls-remote "${GIT_URL}" >/dev/null 2>&1
   if [[ $? -eq 0 ]]; then
-    echo "${B2}Git and Github login verified successfully.${T0}"
+    echo "Git and Github login verified successfully."
     mkdir -p "${SITE_USER_DIR}"
-    ( cd ~/.ssh; tar cf "${SITE_USER_DIR}/sshkeys.tar" ${SSH_KEYPAIR[@]} )
+    ( cd ~/.ssh
+      tar cf "${SITE_USER_DIR}/keys/sshkeys.tar" ${SSH_KEYPAIR[@]} )
     echo "${BD}Github recovery key backup updated.${T0}"
+    echo "${SITE_USER_DIR}/keys/sshkeys.tar"
   else
     err1 ${LINENO} "Github SSH login failure."
     echo; exit 1
  fi
-} 
+}
 
-function git_prepare {
+function git_prepare { ######################################################
   # The purpose of this function is to protect an valid Git directory
   # from being removed by an Antora generate --clean command. The function
   # will verify and relocate a current Git directory if necessary, and
@@ -942,11 +921,11 @@ function git_prepare {
   status_0=0
 }
 
-function init_antora {
+function init_antora { ######################################################
   # Set up antora environment and cd into DOCS_SITE_DIR, which
   # is the default location for local node installations.
   # 
-  local http_server=0 livereload=0
+  local http_server=0
   #
   if [[ -d "${DOCS_SITE_DIR}" ]]; then
     source "${NVM_INIT}"
@@ -960,8 +939,7 @@ function init_antora {
   # Check node installation prerequisites.
   #
   npm list http-server >/dev/null 2>&1 && http_server=1 # installed.
-  npm list livereload >/dev/null 2>&1 && livereload=1 # installed.
-  if [[ ${http_server} -eq 0 || ${livereload} -eq 0 ]]; then
+  if [[ ${http_server} -eq 0 ]]; then
     function red { box 0 "${B1}$1" 1; box 0 "$2"; }
     echo
     mute # stop user input and cursor display while drawing the box.
@@ -969,7 +947,6 @@ function init_antora {
     red "ERROR!" "${BD}Missing node installation pre-requisites."
     box 0
     [[ ${http_server} -eq 0 ]] && box 0 "http-server not installed."
-    [[ ${livereload} -eq 0 ]] && box 0 "livereload not installed."
     box 0 box_bottom
     umute # Restore terminal state prior to mute().
     unset -f red 
@@ -978,7 +955,7 @@ function init_antora {
   fi
 }
 
-function install_ui_bundle {
+function install_ui_bundle { ################################################
   local out="${DOCS_SITE_DIR}/${DEFUI_DIR}/ui-bundle_${DATE_TAG}.zip"
   #
   mkdir -p "${DOCS_SITE_DIR}/${DEFUI_DIR}"
@@ -1003,7 +980,7 @@ function install_ui_bundle {
   fi
 }
 
-function clone_ui_src { 
+function clone_ui_src { #####################################################
   # Fetch the current default Antora UI source from github.
   # Create a new diretory with a current date tag and verify it is empty.
   #
@@ -1033,7 +1010,7 @@ function clone_ui_src {
   fi
 }
 
-function build_antora {
+function build_antora { #####################################################
   # Exectuing Antora from within a valid DOCS_SITE_DIR always works,
   # regardless of Antora being installed globally ($HOME) or locally.
   # Build the site and enable Antora rebuild watcher for localhost
@@ -1066,20 +1043,11 @@ function build_antora {
     esac     
   fi
   echo -n "Building site... "
-  # Use ANTORA_DEV to support live reload when enabled.
-  # (localhost only, port 35729 - partials/footer-scripts.hbs)
-  # if enabled.
-  if [[ ${LIVERELOAD} == enable ]]; then
-    ANTORA_DEV=true HOSTNAME=${HTTP_ADDR:-localhost} \
-       npx antora $* "${PLAYBOOK}"
-    return $?
-  else
-    npx antora $* "${PLAYBOOK}"
-    return $?
-  fi
+  npx antora $* "${PLAYBOOK}"
+  return $?
 }
 
-function get_tcp_pid {
+function get_tcp_pid { ######################################################
   # Return the pid of given tcp/ip listening port
   # Requires $1=port
   #
@@ -1097,32 +1065,7 @@ function get_tcp_pid {
   [[ -z ${pid} ]] && echo 0 || echo ${pid}
 }
 
-function stop_livereload {
-  # Prompt to abort the server before starting.
-  #
-  pid=$( get_tcp_pid ${LIVERLD_PORT} )
-  if [ ${pid} -ne 0 ]; then
-    echo "LiveReload currently running."
-    echo "Killing process ${pid}"
-    kill ${pid}
-    # Verify
-    pid=$( get_tcp_pid ${LIVERLD_PORT} )
-    if [[ ${pid} -eq 0 ]]; then
-      echo "Process ${pid} killed successfully."
-      echo "Removing logfile: ${LIVERLD_LOG}"
-      rm "${LIVERLD_LOG}"
-      status_0=0           
-    else
-      err1 ${LINENO} "Error stopping process ${pid}."
-      echo; exit 1
-    fi
-  else 
-    echo "LiveReload already shutdown."
-    status_0=0
-  fi
-}
-
-function stop_http_server {
+function stop_http_server { #################################################
   pid=$( get_tcp_pid ${HTTP_PORT} )
   if [ ${pid} -ne 0 ]; then
     echo "Web server currently running."
@@ -1145,39 +1088,7 @@ function stop_http_server {
   fi
 }
 
-function start_livereload {
-  # Start livereload and and return success or failure.
-  #
-  local line pid=$( get_tcp_pid ${LIVERLD_PORT} )
-  [[ ${pid} -ne 0 ]] && stop_livereload # Always stop prior to starting.
-  echo "Starting LiveReload..."
-  # Create a new logfile.
-  init_antora
-  # Start livereload in background.
-  # Note: LiveReload works alongside http-server and will automatically
-  #       refresh the browser whenever files in the build/site directory
-  #       change. You still need to connect to the http-server port
-  #       (e.g., 8000), not the LiveReload port (35729).
-  nohup npx livereload "${BUILD_SITE_DIR}" -b ${HTTP_ADDR} \
-     > "${LIVERLD_LOG}" 2>&1 &
-  echo "LiveReload logfile: ${LIVERLD_LOG}"
-  # Wait for success or timeout.
-  start_time=$(date +%s)
-  while true; do
-    if grep -qi "${HTTP_ADDR}:${LIVERLD_PORT}" "${LIVERLD_LOG}"; then
-      break
-    fi
-    now=$(date +%s)
-    if (( now - start_time > 10 )); then
-      err1 ${LINENO} "LiveReload timeout." \
-        "${HTTP_ADDR}:${LIVERLD_PORT} not detected."
-      echo; exit 1
-    fi
-    sleep 1
-  done
-}
-
-function start_http_server {
+function start_http_server { ################################################
   # Start the http-server and return success or failure.
   #
   local line pid=$( get_tcp_pid ${HTTP_PORT} )
@@ -1190,8 +1101,11 @@ function start_http_server {
   # Note: liverload interlinks http-server, and will automatically
   #       reload the page when file changes occur in the build/site
   #       directory. You still need to connect to port 8000.
-  nohup npx http-server build/site -a ${HTTP_ADDR} -p ${HTTP_PORT} \
-        -c -1 > "${HTTP_LOG}" 2>&1 &
+  nohup npx http-server "${BUILD_SITE_DIR}" -S \
+          -C "${SITE_USER_DIR}/keys/${HTTP_ADDR}_cert.pem" \
+          -K "${SITE_USER_DIR}/keys/${HTTP_ADDR}_key.pem" \
+          -a ${HTTP_ADDR} -p ${HTTP_PORT} \
+          -c -1 > "${HTTP_LOG}" 2>&1 &
   echo "Server logfile: ${HTTP_LOG}"
   # Wait for success or timeout.
   start_time=$(date +%s)
@@ -1219,21 +1133,24 @@ function start_http_server {
   return 0
 }
 
-function open_browser {
+function open_browser { #####################################################
   # Opens a tab/window using the default web browser. 
   # Requires $BROWSER_LAUNCH
   #
   local cmd
   #
   case ${OS} in 
-    Darwin) cmd="open http://${HTTP_ADDR}:${HTTP_PORT}" ;;
-     Linux) cmd="python -m webbrowser http://${HTTP_ADDR}:${HTTP_PORT}" ;;
-         *) cmd="echo http://${HTTP_ADDR}:${HTTP_PORT}" ;;
+    Darwin) cmd="open https://${HTTP_ADDR}:${HTTP_PORT}" ;;
+     Linux) cmd="python -m webbrowser https://${HTTP_ADDR}:${HTTP_PORT}" ;;
+         *) cmd="echo https://${HTTP_ADDR}:${HTTP_PORT}" ;;
   esac
   case ${BROWSER_LAUNCH} in
     yes) ${cmd} >/dev/null 2>&1
          echo; status_0=0 ;;
-    ask) echo
+    ask) box r box_top
+         box r "Use Shift + Reload Page to bypass the web-browser cache."
+         box r box_bottom
+         echo
          get_reply \
            "${BD}Open URL in web browser? (Y/N)${T0}:" "N Y"
          case "${REPLY}" in
@@ -1247,26 +1164,25 @@ function open_browser {
   esac
 }
 
-function define_menu_options {
+function define_menu_options { ##############################################
   # We need to define the menu_number variables in menu and non-menu mode.
   #
-  MENU_M1="${BD} (1) Build Site"
-  MENU_M2="${B2} (2) Build Site & Restart Local Server"
-  MENU_M3="${B3} (3) Build Site (Reset) & Restart Local Server"
-  MENU_M4="${B1} (4) Stop Local Server"
-  MENU_M5="${B6} (5) Start Local Server"
-  MENU_M6="${C3} (6) Publish Web Site Menu (github.io)"
-  MENU_M8=" (8) Clone Default Antora UI Source"
-  MENU_M9=" (9) Install Default Antora UI Bundle"
-  MENU_M0=" (0) Init NVM Shell"
-  MENU_P1="${BD} (1) Verify Git and Github SSH Login"
-  MENU_P2="${B5} (2) Analyze Without Publishing"
-  MENU_P3="${B2} (3) Publish Site Updates"
-  MENU_P4="${B3} (4) Complete Site Redeploy (Reset Update History)"
+  MENU_M1="${BD}(1) Build Site"
+  MENU_M2="${B2}(2) Build Site & Restart Local Server"
+  MENU_M3="${B3}(3) Build Site (Reset) & Restart Local Server"
+  MENU_M4="${B1}(4) Stop Local Server"
+  MENU_M5="${B6}(5) Start Local Server"
+  MENU_M6="${C3}(6) Publish Web Site Menu (github.io)"
+  MENU_M8="(8) Clone Default Antora UI Source"
+  MENU_M9="(9) Install Default Antora UI Bundle"
+  MENU_M0="(0) Init NVM Shell"
+  MENU_P1="${BD}(1) Verify Git and Github SSH Login"
+  MENU_P2="${B5}(2) Analyze Without Publishing"
+  MENU_P3="${B2}(3) Publish Site Updates"
+  MENU_P4="${B3}(4) Complete Site Redeploy (Reset Update History)"
 }
 
-function publish_github_io {
-  local livereload_status=TBD
+function publish_github_io { ################################################
   if [[ ${publish} -ne 1 ]]; then
     echo
     mute # stop user input and cursor display while drawing the box.
@@ -1274,10 +1190,10 @@ function publish_github_io {
     box 4 " SITE_URL: ${B6}${SITE_URL}"
     box 4 " GIT_URL:  ${B6}${GIT_URL}"
     box 4 box_middle
-    box 4 "${MENU_P1}"
-    box 4 "${MENU_P2}"
-    box 4 "${MENU_P3}"
-    box 4 "${MENU_P4}"
+    box 4 " ${MENU_P1}"
+    box 4 " ${MENU_P2}"
+    box 4 " ${MENU_P3}"
+    box 4 " ${MENU_P4}"
     box 4
     box 4 " (E) Exit"
     box 4 box_bottom
@@ -1313,12 +1229,8 @@ function publish_github_io {
   #
   cd "${BUILD_SITE_DIR}" # Critical.
   # A valid Antora site requires a _ directory for UI assets to function.
-  # It should also contain 404.html, which we can check if livereload has
-  # been implemented.
-  if [[ -f "${BUILD_SITE_DIR}/404.html" ]]; then
-    grep -q livereload.js "${BUILD_SITE_DIR}/404.html" \
-      && livereload_status=enabled
-  else
+  # It should also contain 404.html.
+  if [[ ! -f "${BUILD_SITE_DIR}/404.html" ]]; then
     err1 ${LINENO} "File not found: 404.html" \
       "Directory: ${BUILD_SITE_DIR}/_" \
       "No site has been generated, yet." 
@@ -1421,11 +1333,6 @@ function publish_github_io {
          status_0=1
          echo; return
        else
-         if [[ ${livereload_status} = enabled ]]; then
-           echo -n "LiveReload detected. Disabling."
-           post_process publish modify
-           echo
-         fi
          git config --global init.defaultBranch main
          git init -q
          git read-tree --empty
@@ -1435,11 +1342,6 @@ function publish_github_io {
            || git remote add origin "${GIT_URL}"
          git push origin main
          [[ $? -eq 0 ]] && status_0=0
-         if [[ ${livereload_status} = enabled ]]; then
-           echo -n "Restoring LiveReload."
-           post_process publish restore
-           echo
-         fi
          return
        fi ;;
     4) git_prepare     
@@ -1463,11 +1365,6 @@ function publish_github_io {
        mkdir -p "${GIT_SAFE_DIR}"
        ln -sf "${GIT_SAFE_DIR}" "${GIT_SITE_DIR}"
        echo
-       if [[ ${livereload_status} = enabled ]]; then
-         echo -n "LiveReload detected. Disabling."
-         post_process publish modify
-         echo
-       fi
        git init
        git add -A
        git commit -m "Site redeploy"
@@ -1475,16 +1372,11 @@ function publish_github_io {
        git remote add origin "${GIT_URL}"
        git push -f origin main
        [[ $? -eq 0 ]] && status_0=0
-       if [[ ${livereload_status} = enabled ]]; then
-         echo -n "Restoring LiveReload."
-         post_process publish restore
-         echo
-       fi
        return ;;
   esac
 }
 
-function post_process {
+function post_process { #####################################################
   # Requries $1 - postproc.sh function name $2 task (depending).
   # Read antora.yml to get single stream of text separated by comma,
   # regardless of YAML format. Then extract the component name, which
@@ -1540,11 +1432,12 @@ help=0 version=0 config=0 main=0 publish=0 round=0 number=undefined
 file=""
 
 # First rule out single-dash long options. Word matching is the trick here.
+# 
 for i in "$@"; do
   if grep -iqwE -- 'onfig|ublish|ersion|ain|elp' <<< ${i:2}; then
     err1 ${LINENO} "Invalid command line argument." \
       "Invalid long option detected: ${i}" \
-      "Try \`${iam} --help' for more information."
+      "Try \`${IAM} --help' for more information."
     echo; exit 1
   fi
 done
@@ -1583,6 +1476,7 @@ for i in "${!args[@]}"; do
 done
 
 # Check whatever arguments are left for valid filenames.
+#
 for i in "${!args[@]}"; do
   case "${args[i]}" in
     *.yml) if [[ -e ${args[i]} ]]; then
@@ -1592,7 +1486,7 @@ for i in "${!args[@]}"; do
            else
              err1 ${LINENO} "File not found." \
                "File: ${args[i]}" \
-               "Try \`${iam} --help' for more information."
+               "Try \`${IAM} --help' for more information."
              echo; exit 1
            fi ;;
   esac
@@ -1615,7 +1509,7 @@ for item in "$@"; do
   [[ -z ${item} ]] && continue
   err1 ${LINENO} "Invalid option(s)." \
     "Invalid option(s): $*" \
-    "Try \`${iam} --help' for more information."
+    "Try \`${IAM} --help' for more information."
   echo; exit 1
 done
 
@@ -1628,7 +1522,7 @@ done
 
 if [[ ${combine} == invalid ]]; then
     err1 ${LINENO} "Invalid combination of command line arguments." \
-      "Try \`${iam} --help' for more information."
+      "Try \`${IAM} --help' for more information."
     echo; exit 1
 fi
 
@@ -1636,7 +1530,7 @@ if (( main || publish )); then
   if [[ ${number} == undefined ]]; then
     err1 ${LINENO} "Missing menu option." \
       "'main' or 'publish' requires a menu number." \
-      "Try \`${iam} --help' for more information."
+      "Try \`${IAM} --help' for more information."
     echo; exit 1
   fi
 fi
@@ -1644,7 +1538,7 @@ if [[ ${number} != undefined ]]; then
   if (( publish + main != 1 )); then
     err1 ${LINENO} "Missing menu option." \
       "Number requires 'main' or 'publish' keyword." \
-      "Try \`${iam} --help' for more information."
+      "Try \`${IAM} --help' for more information."
     echo; exit 1
   fi
 fi
@@ -1668,8 +1562,9 @@ fi
 # Finished checking integrity of command line arguments.
 # Continue processing the result.
 #
-(( help )) && help && exit
-(( version )) && version && exit
+(( help )) && { help; echo; exit; }
+(( version )) && { version; echo; exit; }
+
 
 # Define $PLAYBOOK.
 #
@@ -1691,42 +1586,29 @@ if (( publish + main == 0 )); then
   approve_config
   echo
   http_pid=$( lsof -ti tcp:${HTTP_PORT} -sTCP:LISTEN )
-  livereload_pid=$( lsof -ti tcp:${LIVERLD_PORT} -sTCP:LISTEN )
   (( ${http_pid} )) && h_msg="${B2}running" || h_msg="${B1}stopped"
-  if [[ ${LIVERELOAD} == enable ]]; then
-    l_conf="${B3}enabled"
-  else
-    l_conf="disabled"
-  fi
-  if (( ${livereload_pid} )); then
-    l_msg="${B2}running"
-  else
-    l_msg="${B1}stopped"
-  fi
   function header { box 4 "${C3}$1" 1; box 4 "$2" 1; box 4 "$3"; }
   mute # stop user input and cursor display while drawing the box.
   box 4 box_top
   ws="          "
   header "${C3} Antora Manager 1.0${ws}"  "http-server: ${h_msg}"
-  header "${ws}                   "  "livereload:  ${l_msg}" "- ${l_conf}"
-  unset l_msg l_conf ws 
   unset -f header
   box 4 box_middle
-  box 4 "${MENU_M1}"
-  box 4 "${MENU_M2}"
-  box 4 "${MENU_M3}"
-  box 4 "${MENU_M4}"
-  box 4 "${MENU_M5}"
-  box 4 "${MENU_M6}"
+  box 4 " ${MENU_M1}"
+  box 4 " ${MENU_M2}"
+  box 4 " ${MENU_M3}"
+  box 4 " ${MENU_M4}"
+  box 4 " ${MENU_M5}"
+  box 4 " ${MENU_M6}"
   box 4
-  box 4 "${MENU_M8}"
-  box 4 "${MENU_M9}" 
-  box 4 "${MENU_M0}"
+  box 4 " ${MENU_M8}"
+  box 4 " ${MENU_M9}" 
+  box 4 " ${MENU_M0}"
   box 4 " (E) Exit"
   box 4 box_bottom
   umute # Restore terminal state prior to mute().
   echo
-  get_reply "      ${BD}Press menu option:${T0}" "1 2 3 4 5 6 7 8 9 0 E"
+  get_reply "      ${BD}Press menu option:${T0}" "E 1 2 3 4 5 6 7 8 9 0"
   [[ $? -eq 3 ]] && status_0=1
 else
   # Skip menu-mode. 
@@ -1744,36 +1626,22 @@ else
 fi
 case "${REPLY}" in
   1) printf "\n${MENU_M1}${T0}\n\n"
-     build_antora
-     if [[ $? -eq 0 ]]; then
-       post_process callout
-       [[ $? -eq 0 ]] && open_browser "http://${HTTP_ADDR}:${HTTP_ADDR}"
+     if build_antora && post_process callout; then
+       start_http_server && open_browser
      else
        status_0=1
      fi
   ;;
   2) printf "\n${MENU_M2}${T0}\n\n"
      stop_http_server # Stop local http-server prior to building.
-     stop_livereload # Stop livereload.
-     build_antora
-     if [[ $? -eq 0 ]]; then
-       post_process callout
-       if [[ $? -eq 0 ]]; then
-         start_http_server
-         if [[ $? -eq 0 ]]; then
-           [[ ${LIVERELOAD} == enable ]] && start_livereload
-           [[ $? -eq 0 ]] && open_browser
-         fi
-       else
-         status_0=1
-       fi 
+     if build_antora && post_process callout; then
+       start_http_server && open_browser
      else
        status_0=1
      fi
   ;;
   3) printf "\n${MENU_M3}${T0}\n\n"
      stop_http_server
-     stop_livereload
      git_prepare # Verify .git directory.
      printf "\nSite directory: ${B3}${BUILD_SITE_DIR}${T0}\n\n"
      get_reply \
@@ -1792,31 +1660,18 @@ case "${REPLY}" in
        N) echo "Continuing without erasing the site directory..." ;;
        *) printf "\nInvalid response, exiting...\n"; exit 1 ;;
      esac
-     build_antora --stacktrace
-     if [[ $? -eq 0 ]]; then
-       post_process callout
-       if [[ $? -eq 0 ]]; then
-         start_http_server
-         if [[ $? -eq 0 ]]; then
-           [[ ${LIVERELOAD} == enable ]] && start_livereload
-           [[ $? -eq 0 ]] && open_browser
-         fi
-       else
-         status_0=1
-       fi 
+     if build_antora --stacktrace && post_process callout; then
+       start_http_server && open_browser
      else
        status_0=1
      fi
   ;;
   4) printf "\n${MENU_M4}${T0}\n\n"
      stop_http_server
-     stop_livereload 
   ;;
   5) printf "\n${MENU_M5}${T0}\n\n"
      init_antora
-     start_http_server
-     [[ ${LIVERELOAD} == enable ]] && start_livereload
-     [[ $? -eq 0 ]] && open_browser
+     start_http_server && open_browser
   ;; 
   6) case ${SERVICE} in
        github.io) publish_github_io ;;
@@ -1851,4 +1706,4 @@ else
   echo; echo "${IAM} completed."
 fi
 
-## END 783c87a053a8 
+## END b0fd89e4d58c 

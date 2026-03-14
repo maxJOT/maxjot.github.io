@@ -24,8 +24,26 @@
     <a class="nav-link" href="../index.html">Home</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <span class="nav-text">&#160;</span>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Projects</span>
+    <span class="nav-text">Antora</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="antora-manager.html">Antora Site Manager</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="antora-howto.html">Antora How-To</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../bash/bash-almanac.html">Bash Almanac</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Bash In-Action</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../downloads/wlaninfo.html">wlaninfo</a>
@@ -38,19 +56,12 @@
   </li>
 </ul>
   </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Bash</span>
+    <span class="nav-text">Bash Insider</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../bash/bash-almanac.html">Almanac</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../bash/bash-proposals.html">Proposals</a>
+    <a class="nav-link" href="../bash/bash-proposals.html">Bash Variable Naming</a>
   </li>
 </ul>
   </li>
@@ -91,6 +102,18 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reviews/wlaninfo-review.html">wlaninfo</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/almanac-term_init-review.html">Almanac Colors &amp; Styles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/almanac-box-review.html">Almanac Boxes &amp; Borders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/almanac-args-review.html">Almanac Args &amp; Options</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/almanac-get_reply-review.html">Almanac User Input Control</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -112,14 +135,13 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">maxJOT</a></li>
-    <li><a href="antora-manager.html">Antora Single Site Manager (ASSM)</a></li>
+    <li>Antora</li>
+    <li><a href="antora-manager.html">Antora Site Manager</a></li>
   </ul>
 </nav>
 <!-- Adding a search box -->
-  <div class="navbar-item search hide-for-print">
-    <div id="search-field" class="field">
-      <input id="search-input" type="text" placeholder="Search the site">
-    </div>
+  <div id="search-field" class="field">
+    <input id="search-input" type="text" placeholder="Search the site">
   </div>
 </div>
 
@@ -132,53 +154,346 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Building and publishing an Antora site is deceptively complex. Beyond the generator itself, you must account for Node environments, Git safety, SSH credentials, playbook output paths, and the risk of unintentionally deleting Git history during rebuilds.</p>
-</div>
-<div class="paragraph">
-<p>The Antora Single Site Manager (ASSM) exists to make those risks explicit—and manageable.</p>
-</div>
-<div class="paragraph">
-<p>ASSM wraps the full Antora workflow into a single, defensive tool that prioritizes verification, reproducibility, and safety over shortcuts. It respects the Antora playbook as the source of truth, including custom output: directives, and adapts its behavior accordingly.</p>
-</div>
-<div class="paragraph">
-<p>Rather than requiring script edits, ASSM exposes supported configuration through validated user configuration files. Missing or invalid settings are detected early, with clear diagnostics and safe defaults.</p>
-</div>
-<div class="paragraph">
-<p>Key design goals:</p>
-</div>
-<div class="paragraph">
-<p>ASSM is written entirely in Bash to maximize portability and transparency. The script is fully inspectable, performs no hidden network activity, and never accesses the Internet unless explicitly requested by the user. A built-in self-integrity check helps detect accidental corruption caused by file transfers or copy-and-paste errors before any destructive operation is performed.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Preserve Git history across rebuilds and clean operations</p>
-</li>
-<li>
-<p>Respect Antora playbook output configuration</p>
-</li>
-<li>
-<p>Prevent accidental publishing or destructive updates</p>
-</li>
-<li>
-<p>Support both interactive and non-interactive workflows</p>
-</li>
-<li>
-<p>Make every critical operation visible and reversible</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>ASSM is designed for Antora users who value confidence over convenience and prefer transparent tooling they can audit and trust.</p>
+<p>Does this work, do you think?</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_livereload_and_http_server"><a class="anchor" href="#_livereload_and_http_server"></a>LiveReload and http-server</h2>
+<h2 id="_core_purpose"><a class="anchor" href="#_core_purpose"></a>Core Purpose</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Manage a single <a href="https://antora.org/">Antora</a> site from build to publish</p>
+</li>
+<li>
+<p>Provide both interactive menu mode and command-line option mode</p>
+</li>
+<li>
+<p>Reduce common deployment pitfalls and configuration errors</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_environment_safety_controls"><a class="anchor" href="#_environment_safety_controls"></a>Environment &amp; Safety Controls</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Verifies Bash ≥ 4</p>
+</li>
+<li>
+<p>Performs self-checksum integrity validation</p>
+</li>
+<li>
+<p>Prevents source execution of the script</p>
+</li>
+<li>
+<p>Detects OS (macOS/Linux) and adapts behavior</p>
+</li>
+<li>
+<p>Uses enhanced terminal UI (colors, boxed menus, protected input)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration_management"><a class="anchor" href="#_configuration_management"></a>Configuration Management</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Automatically creates and manages:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>site.conf</code></p>
+</li>
+<li>
+<p><code>git.conf</code></p>
+</li>
+<li>
+<p><code>postproc.sh</code></p>
+</li>
+<li>
+<p><code>readme.txt</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Extracts Antora playbook settings</p>
+</li>
+<li>
+<p>Parses custom <code>output:</code> sections (uses <code>yq</code> if required)</p>
+</li>
+<li>
+<p>Builds absolute paths for the site output directory</p>
+</li>
+<li>
+<p>Provides configuration verification screen before execution</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_antora_build_features"><a class="anchor" href="#_antora_build_features"></a>Antora Build Features</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Builds site via <code>npx antora</code></p>
+</li>
+<li>
+<p>Supports:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Standard build</p>
+</li>
+<li>
+<p>Reset build</p>
+</li>
+<li>
+<p>Build + restart local server</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Detects missing <code>.git</code> repository and offers to initialize one</p>
+</li>
+<li>
+<p>Enables optional LiveReload integration</p>
+</li>
+<li>
+<p>Supports <code>ANTORA_DEV</code> mode for local development</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_local_development_server_management"><a class="anchor" href="#_local_development_server_management"></a>Local Development Server Management</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Starts and stops:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>http-server</code></p>
+</li>
+<li>
+<p><code>livereload</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Detects and kills existing processes by port</p>
+</li>
+<li>
+<p>Writes log files for both services</p>
+</li>
+<li>
+<p>Automatically opens browser (configurable: yes / no / ask)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_git_github_publishing_github_io"><a class="anchor" href="#_git_github_publishing_github_io"></a>Git &amp; GitHub Publishing (github.io)</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Verifies Git version requirements</p>
+</li>
+<li>
+<p>Validates GitHub SSH connectivity</p>
+</li>
+<li>
+<p>Restores missing SSH keys from backup archive</p>
+</li>
+<li>
+<p>Maintains backup of working SSH keys</p>
+</li>
+<li>
+<p>Protects <code>.git</code> from <code>antora --clean</code> by:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Relocating repository outside build directory</p>
+</li>
+<li>
+<p>Creating symlink back into generated site</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_publishing_modes"><a class="anchor" href="#_publishing_modes"></a>Publishing Modes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Verify Git and SSH login</p>
+</li>
+<li>
+<p>Analyze changes (no publish)</p>
+</li>
+<li>
+<p>Incremental publish (commit and push updates)</p>
+</li>
+<li>
+<p>Full redeploy (force reset history)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_publishing_enhancements"><a class="anchor" href="#_publishing_enhancements"></a>Publishing Enhancements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Temporarily disables LiveReload before publishing</p>
+</li>
+<li>
+<p>Restores LiveReload after publishing</p>
+</li>
+<li>
+<p>Creates <code>.nojekyll</code> (required for GitHub Pages + Antora)</p>
+</li>
+<li>
+<p>Ignores <code>.DS_Store</code> (macOS)</p>
+</li>
+<li>
+<p>Displays file change statistics and upload size summary</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ui_management"><a class="anchor" href="#_ui_management"></a>UI Management</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Download default Antora UI bundle</p>
+</li>
+<li>
+<p>Clone default Antora UI source repository</p>
+</li>
+<li>
+<p>Organize UI files using date-based directories</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_post_processing_features"><a class="anchor" href="#_post_processing_features"></a>Post-Processing Features</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Modify generated HTML to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Disable/restore LiveReload during publishing</p>
+</li>
+<li>
+<p>Convert custom <code><span class="coalpha" data-value="A"></span><b>(A)</b></code> markers into styled callout badges</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Keeps reference markers invisible to "Copy Code" behavior</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_overall_impact"><a class="anchor" href="#_overall_impact"></a>Overall Impact</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>ASSM checks certain software dependencies but does not download or install any software. You need to install</p>
+<p>ASSM acts as a protective automation wrapper around Antora, combining:</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>Build automation</p>
+</li>
+<li>
+<p>Local development server control</p>
+</li>
+<li>
+<p>Git repository protection</p>
+</li>
+<li>
+<p>GitHub Pages publishing</p>
+</li>
+<li>
+<p>Configuration validation</p>
+</li>
+<li>
+<p>Error detection and recovery</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It transforms a single Antora site into a controlled, menu-driven deployment environment rather than relying on manual command sequencing.</p>
+</div>
+<figure class="doc-image">
+  <a href="../_attachments/antora/assm/1.0/screen1.png" class="glightbox">
+    <img src="../_attachments/antora/assm/1.0/screen1.png" alt="screen1" width="300">
+  </a>
+  <figcaption>Menues</figcaption>
+</figure>
+<figure class="doc-image">
+  <a href="../_attachments/antora/assm/1.0/screen2.png" class="glightbox">
+    <img src="../_attachments/antora/assm/1.0/screen2.png" alt="screen2" width="300">
+  </a>
+  <figcaption>Analyze</figcaption>
+</figure>
+<figure class="doc-image">
+  <a href="../_attachments/antora/assm/1.0/screen3.png" class="glightbox">
+    <img src="../_attachments/antora/assm/1.0/screen3.png" alt="screen3" width="300">
+  </a>
+  <figcaption>Config</figcaption>
+</figure>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_downloads_and_preview"><a class="anchor" href="#_downloads_and_preview"></a>Downloads and Preview</h2>
+<div class="sectionbody">
+<form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.0/assm.sh">
+  <button type="submit" class="hover-fill-btn">
+    <span>⬇️ Download assm.sh 1.0</span>
+  </button>
+</form>
+<form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.0/assm.sh">
+  <button type="submit" class="hover-fill-btn">
+    <span>🔍 Preview assm.sh 1.0</span>
+  </button>
+</form>
 </div>
 </div>
 <div class="sect1">
@@ -406,42 +721,7 @@ $1 "$2" "$3"
 └── yq</pre>
 </div>
 </div>
-<figure class="doc-image">
-  <a href="../_attachments/antora/assm/1.0/screen1.png" class="glightbox">
-    <img src="../_attachments/antora/assm/1.0/screen1.png" alt="screen1" width="300">
-  </a>
-  <figcaption>Menues</figcaption>
-</figure>
-<figure class="doc-image">
-  <a href="../_attachments/antora/assm/1.0/screen2.png" class="glightbox">
-    <img src="../_attachments/antora/assm/1.0/screen2.png" alt="screen2" width="300">
-  </a>
-  <figcaption>Analyze</figcaption>
-</figure>
-<figure class="doc-image">
-  <a href="../_attachments/antora/assm/1.0/screen3.png" class="glightbox">
-    <img src="../_attachments/antora/assm/1.0/screen3.png" alt="screen3" width="300">
-  </a>
-  <figcaption>Config</figcaption>
-</figure>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_downloads_and_preview"><a class="anchor" href="#_downloads_and_preview"></a>Downloads and Preview</h2>
-<div class="sectionbody">
-<form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.0/assm.sh">
-  <button type="submit" class="hover-fill-btn">
-    <span>⬇️ Download assm.sh 1.0</span>
-  </button>
-</form>
-<form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/antora/assm/1.0/assm.sh">
-  <button type="submit" class="hover-fill-btn">
-    <span>🔍 Preview assm.sh 1.0</span>
-  </button>
-</form>
 </div>
 </div>
 </article>
@@ -481,9 +761,9 @@ $1 "$2" "$3"
     });
   });
 </script>
-<script src="../../_/js/vendor/lunr.js"></script>
+  <script src="../../_/js/vendor/lunr.js"></script>
 <script src="../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../.." data-snippet-length="100" data-stylesheet="../../_/css/search.css"></script>
 <script async src="../../search-index.js"></script>
-<!--<script src="http://192.168.2.10:35729/livereload.js"></script>-->
+  <script src="../../_/js/search-button.js"></script>
   </body>
 </html>

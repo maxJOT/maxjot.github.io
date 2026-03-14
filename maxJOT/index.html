@@ -24,8 +24,26 @@
     <a class="nav-link" href="index.html">Home</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <span class="nav-text">&#160;</span>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Projects</span>
+    <span class="nav-text">Antora</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="antora/antora-manager.html">Antora Site Manager</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="antora/antora-howto.html">Antora How-To</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="bash/bash-almanac.html">Bash Almanac</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Bash In-Action</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="downloads/wlaninfo.html">wlaninfo</a>
@@ -38,19 +56,12 @@
   </li>
 </ul>
   </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Bash</span>
+    <span class="nav-text">Bash Insider</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="bash/bash-almanac.html">Almanac</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="bash/bash-proposals.html">Proposals</a>
+    <a class="nav-link" href="bash/bash-proposals.html">Bash Variable Naming</a>
   </li>
 </ul>
   </li>
@@ -91,6 +102,18 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="reviews/wlaninfo-review.html">wlaninfo</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="reviews/almanac-term_init-review.html">Almanac Colors &amp; Styles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="reviews/almanac-box-review.html">Almanac Boxes &amp; Borders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="reviews/almanac-args-review.html">Almanac Args &amp; Options</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="reviews/almanac-get_reply-review.html">Almanac User Input Control</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -116,10 +139,8 @@
   </ul>
 </nav>
 <!-- Adding a search box -->
-  <div class="navbar-item search hide-for-print">
-    <div id="search-field" class="field">
-      <input id="search-input" type="text" placeholder="Search the site" autofocus>
-    </div>
+  <div id="search-field" class="field">
+    <input id="search-input" type="text" placeholder="Search the site" autofocus>
   </div>
 </div>
 
@@ -169,9 +190,9 @@
     });
   });
 </script>
-<script src="../_/js/vendor/lunr.js"></script>
+  <script src="../_/js/vendor/lunr.js"></script>
 <script src="../_/js/search-ui.js" id="search-ui-script" data-site-root-path=".." data-snippet-length="100" data-stylesheet="../_/css/search.css"></script>
 <script async src="../search-index.js"></script>
-<!--<script src="http://192.168.2.10:35729/livereload.js"></script>-->
+  <script src="../_/js/search-button.js"></script>
   </body>
 </html>

@@ -13,7 +13,7 @@
 .doc .doc-image {
   display: inline-block;
   text-align: center;
-  margin: 1.5rem 0;   /* vertical spacing from text */
+  margin: 0 0.25rem 0 0;   /* horizontal spacing */
 }
 
 .doc .doc-image img {
@@ -22,7 +22,7 @@
 }
 
 .doc .doc-image figcaption {
-  margin: 0.25rem 0 0 0;     /* small space below image only */
+  margin: 0 0 0 0;     /* top, right, bottom, left margins */
   font-size: 0.75em;
   color: #555;
   text-align: center;
@@ -39,12 +39,12 @@
 }
 
 .doc .doc-image a.glightbox {
+  display: block;
   margin: 0;          /* no extra spacing between image and caption */
 }
 
 .doc .doc-image a.glightbox[data-type="video"] {
   position: relative;
-  display: inline-block;
   overflow: hidden;
 }
 
@@ -165,7 +165,11 @@
   padding: 0.125em 0.25em;
 }
 
-/* Configure sidebar aspects */
+.doc .paragraph + .listingblock {
+  margin-top: 2.5em;    /* Space between copy code and previous paragraph */
+}
+
+/* Configure sidebar */
 
 .nav-container,
 .nav {
@@ -174,7 +178,7 @@
      the default-ui. Since we disabled the header-content.hbs in header.hbs,
      the we simply compensate --navbar-height using a negative value. Hence
      clickin the nav title and docuemnt link no longer cuases any top shifting */
-  top: -3.5rem !important;
+  top: 0 !important;
 }
 
 @media screen and (max-width: 1023px) {
@@ -250,6 +254,10 @@ body {
 .is-current-page > .nav-link,
 .is-current-page > .nav-text {
   color: #df6a19 !important;
+}
+
+.nav-menu {
+  padding: 0.2rem 0.75rem !important;
 }
 
 /* Configure how to show the "language | [copy-icon]" header in code blocks. 
@@ -387,15 +395,18 @@ body {
   color: black;
 }
 
-/* Make the form behave like a block-level element with spacing */
 .doc form.external-btn-form {
-  display: inline-block;  /* stays inline if multiple buttons are side by side */
-  margin: 1rem 0;         /* vertical spacing */
+  display: block;
+  margin: 1rem 0;
 }
 
-/* Optional: center the form/button */
-.doc form.external-btn-form {
-  text-align: center;    /* centers inline-block buttons */
+.doc form.external-btn-form-inline {
+  display: inline-block;
+  margin: 1rem 0 0 0; /* /* top right bottom left */ */
+}
+
+.doc form.external-btn-form-inline + form.external-btn-form-inline {
+  margin-left: 2rem; /* only applies between buttons */
 }
 
 /* Button spacing inside form (optional) */
@@ -404,6 +415,11 @@ body {
   margin: 0.25rem 0;     /* small spacing around button inside form */
 }
 
+/* Button spacing inside form (optional) */
+.doc form.external-btn-form-inline button.hover-fill-btn {
+  display: inline-block; /* ensures margin and width behave properly */
+  margin: 0.25rem 0;     /* small spacing around button inside form */
+}
 
 /* Configure site footer. See footer-content.hbs for details. */
 
@@ -464,6 +480,49 @@ body {
 
 .body {
   flex: 1 0 auto;             /* grow to fill remaining vertical space */
+}
+
+/* Alter the search field in the toolbar */
+
+#search-field {
+  position: relative;
+  display: inline-block;
+}
+
+/* Input field */
+#search-input {
+  font-size: 0.75rem;
+  padding: 0.3rem 1.6rem 0.3rem 0.5rem !important;
+  border: 2px solid #a6a6a6;
+  border-radius: 0.4em;
+}
+
+/* Magnifier icon */
+#search-field::after {
+  content: "🔍";
+  position: absolute;        /* float over input */
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 0.8rem;
+}
+
+#search-field.has-text::after {
+  content: "";
+}
+
+#search-clear {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.toolbar {
+  padding-right: 1rem; /* reserve space from viewport edge */
 }
 
 /* END */

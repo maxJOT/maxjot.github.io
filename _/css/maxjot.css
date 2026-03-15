@@ -139,17 +139,46 @@
 .doc .listingblock pre:not(.highlight) {
   background: #e7eff8;
   /* font-family: monospace, serif; */
-  font-size: 0.6rem !important;
+  font-size: 12px !important;
+  line-height: 17px !important;
   border: 1px solid #b6c8e0;
   border-radius: 0.4em;
-  overflow-x: auto;
+  /* overflow-x: auto; */
+  max-height: 420px;   /* ~30 lines */
+  overflow: auto !important;      /* vertical & horizontal scroll */
+  /* Firefox scrollbar */
+  scrollbar-width: auto;              /* normal thickness */
+  scrollbar-color: #c2c2c2 #fafafa;      /* thumb / track */
+
+}
+
+/* WebKit (Chrome, Edge, Safari) scrollbar styling */
+.doc pre.highlight > code::-webkit-scrollbar,
+.doc .listingblock pre:not(.highlight)::-webkit-scrollbar {
+  width: 12px;                  /* scrollbar width */
+  height: 12px;                 /* horizontal scrollbar height */
+}
+
+.doc pre.highlight > code::-webkit-scrollbar-track,
+.doc .listingblock pre:not(.highlight)::-webkit-scrollbar-track {
+  background: #fafafa;          /* track color */
+  border-radius: 6px;
+}
+
+.doc pre.highlight > code::-webkit-scrollbar-thumb,
+.doc .listingblock pre:not(.highlight)::-webkit-scrollbar-thumb {
+  background-color: #c2c2c2;   /* thumb color */
+  border-radius: 6px;
+  border: 3px solid #fafafa;   /* padding around thumb */
 }
 
 .doc .literalblock pre {
   background: #f5f5f5 !important;   /* light neutral background */
   color: #000 !important;           /* readable black text */
   /* font-family: monospace, serif; */
-  font-size: 0.6rem !important;
+  /* font-size: 0.6rem !important; */
+  font-size: 12px !important;
+  line-height: 14px !important;
   border-radius: 0.25em;
   padding: 0.75em;
   overflow-x: auto;
@@ -451,6 +480,16 @@ footer.footer {
   color: #1565c0 !important;      /* footer-link-font-color */
 }
 
+.mobile-view-notice {
+  display: block;
+  background: #fdfe02;        
+  border-bottom: 1px solid #e0c97f;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  text-align: center;
+  z-index: 9999;              /* in case something overlaps */
+  position: relative;         /* or fixed if you want it always visible */
+}
 
 /* Custom Home button in toolbar */
 

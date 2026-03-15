@@ -300,9 +300,9 @@ get_random() {
 <div class="literalblock">
 <div class="content">
 <pre>Is the variable used only within the next block of code?
-   ┃
+   │
    ├─ Yes → lowercase (local, intermediate, temporary, etc.)
-   ┃
+   │
    └─ No → Is the value static or read-only?
        │
        ├─ Yes → UPPERCASE (global, static)
@@ -428,5 +428,25 @@ UI_DIR="${project_dir}/ui/${date_tag}"             # Global (static)</pre>
 <script src="../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../.." data-snippet-length="100" data-stylesheet="../../_/css/search.css"></script>
 <script async src="../../search-index.js"></script>
   <script src="../../_/js/search-button.js"></script>
-  </body>
+<script>
+function updateMobileNotice() {
+  const existing = document.querySelector('.mobile-view-notice');
+
+  if (window.innerWidth < 1024) {
+    if (!existing) {
+      const notice = document.createElement('div');
+      notice.className = 'mobile-view-notice';
+      notice.textContent = 'Please enlarge the window for a better experience.';
+      document.body.prepend(notice);
+    }
+  } else {
+    if (existing) {
+      existing.remove();
+    }
+  }
+}
+
+window.addEventListener('DOMContentLoaded', updateMobileNotice);
+window.addEventListener('resize', updateMobileNotice);
+</script>  </body>
 </html>

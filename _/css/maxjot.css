@@ -609,4 +609,14 @@ body {
 }
 
 
+/* completely hide the hover § symbol */
+.doc h1 .anchor::before,
+.doc h2 .anchor::before,
+.doc h3 .anchor::before,
+.doc h4 .anchor::before,
+.doc h5 .anchor::before,
+.doc h6 .anchor::before {
+    content: none !important;
+}
+
 /* END */

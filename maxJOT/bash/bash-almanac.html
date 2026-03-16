@@ -154,13 +154,36 @@
 <h2 id="_introduction"><a class="anchor" href="#_introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Bash Almanac is an engineering-focused reference for building serious shell scripts with GNU Bash. It provides a curated collection of reusable code designed to help developers build robust command-line tools and professional CLI applications.</p>
+<p>The Bash Almanac is a reference for building practical GNU Bash shell scripts.
+It provides reusable functions and examples for creating robust command-line
+tools and interactive CLI programs. All examples are tested under Linux and macOS.
+The snippets are self-contained and can be copied directly into your own scripts.</p>
 </div>
 <div class="paragraph">
-<p>Inside, you will find practical solutions to common but non-trivial scripting tasks: prompting and validating user input, rendering colored terminal output compatible with both the Linux console and remote terminals, drawing boxes around text using Unicode line-drawing, parsing command-line options and arguments, and implementing other features typically expected from advanced command-line programs.</p>
+<p>Topics include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Prompting and validating user input.</p>
+</li>
+<li>
+<p>Generating color output compatible with Linux console and terminals.</p>
+</li>
+<li>
+<p>Drawing text boxes using Unicode line-drawing characters.</p>
+</li>
+<li>
+<p>Advanced parsing of command-line options and arguments.</p>
+</li>
+<li>
+<p>Other features commonly used in advanced CLI scripts.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>All examples and Bash functions have been tested under Linux and macOS. Some features require a minimum Bash version, which is noted where relevant. The snippets are self-contained and copy-and-paste friendly so they can be quickly integrated into your own scripts, giving you reliable, production-ready building blocks for sophisticated shell tooling.</p>
+<p>All examples are tested under Linux and macOS.
+The snippets are self-contained and can be copied directly into your own scripts.</p>
 </div>
 </div>
 </div>
@@ -168,7 +191,13 @@
 <h2 id="_colors_and_styles"><a class="anchor" href="#_colors_and_styles"></a>Colors and Styles</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>term_init defines reusable foreground and background colors, cursor movement, and other control sequence variables. It adjusts terminal color palette mappings, adding colors such as orange for improved visibility across Linux VGA consoles, SSH sessions, and modern terminal emulators. The function includes a demo mode that displays all compatible color options and a cleanup mode that restores the original shell environment if the script needs to be source-executed.</p>
+<p>The <code>term_init</code> function defines reusable foreground and background color variables, cursor movement sequences, and additional terminal control sequences.</p>
+</div>
+<div class="paragraph">
+<p>It adjusts the terminal color palette, adding colors such as orange to improve visibility and maintain compatibility across Linux VGA consoles, SSH sessions, and modern terminal emulators.</p>
+</div>
+<div class="paragraph">
+<p><code>term_init</code> also provides a demo mode to display all available color options and a cleanup mode that restores the original shell environment if the script is source-executed.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -301,7 +330,13 @@ function term_init {
 <h2 id="_boxes_and_borders"><a class="anchor" href="#_boxes_and_borders"></a>Boxes and Borders</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The box function generates professionally styled text boxes using Unicode box-drawing characters, optional color schemes, and flexible line formatting modes. These are great any text that requires special user attention. Since the function draws the box line by line and overlays the desired text, you have full control over appearance. You can also split long text lines to fit a typical 80-character console width. The companion mute function can be used to suppress keyboard echo and disable control-key functions that may otherwise interfere with the display.</p>
+<p>The <code>box</code> function generates text boxes using Unicode box-drawing characters, optional color schemes, and flexible line formatting modes. These are useful for displaying messages that require special user attention.</p>
+</div>
+<div class="paragraph">
+<p>The function draws the box line by line and overlays the desired text, giving the user full control over the final appearance. Long lines can be split manually to match the preferred console width or programming style.</p>
+</div>
+<div class="paragraph">
+<p>The companion <code>mute</code> function can suppress keyboard echo and disable control-key functions that might otherwise interfere with screen rendering.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -420,7 +455,10 @@ function box {
 <h2 id="_user_input_control"><a class="anchor" href="#_user_input_control"></a>User Input Control</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>get_reply is a single key input helper with optional validation and default handling. It provides a professional UI-like user input experience. When a list of valid options is supplied, the first item is automatically treated as the default and selected if the user presses Return. Invalid input is handled internally with automatic re-prompts and without visible redraw artifacts. The function returns the chosen value via REPLY along with a meaningful exit status.</p>
+<p>The <code>get_reply</code> function provides single-key user input with optional validation and default handling. When a list of valid options is supplied, the first item is automatically treated as the default and chosen if the user presses Return.</p>
+</div>
+<div class="paragraph">
+<p>Invalid input is handled internally with automatic re-prompts and without visible screen redraw artifacts. The function returns the selected value via <code>REPLY</code> along with a meaningful exit status.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -532,10 +570,13 @@ function get_reply {
 <h2 id="_arguments_and_options"><a class="anchor" href="#_arguments_and_options"></a>Arguments and Options</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Parsing command line arguments in a flexible and user-friendly way can quickly become complex when aiming for professional-grade behavior. Beyond basic option handling, a robust parser must manage option bundles, parameterized options, mutual exclusivity rules, detailed diagnostics, and meaningful error reporting. This implementation is designed to be order-agnostic and tolerant of redundant options, allowing users to supply arguments in any sequence while gracefully handling repeated specifications without unnecessary failures.</p>
+<p>Parsing command-line arguments in a flexible and user-friendly way can quickly become complex when aiming for professional-grade behavior. Beyond basic option handling, a capable parser must manage option bundles, parameterized options, mutual exclusivity rules, diagnostics, and meaningful error reporting.</p>
 </div>
 <div class="paragraph">
-<p>The demonstration script serves as a practical reference for building structured argument processing logic in Bash. It is not intended to enforce a rigid parsing framework, but rather to illustrate one possible professional approach that can be adapted, simplified, or extended according to application requirements. Developers may modify the logic to suit specific workflows while preserving the principles of clarity, validation, and predictable behavior.</p>
+<p>This implementation demonstrates structured argument parsing in Bash. It is designed to be order-agnostic and tolerant of redundant options, allowing users to supply arguments in any sequence while handling repeated specifications gracefully.</p>
+</div>
+<div class="paragraph">
+<p>The demonstration script serves as a practical reference that can be adapted, simplified, or extended according to application requirements.</p>
 </div>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
   <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/args_example.sh">

@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>wlaninfo :: maxJOT</title>
-    <link rel="canonical" href="https://maxjot.github.io/maxJOT/downloads/wlaninfo.html">
+    <title>dmgcrack :: maxJOT</title>
+    <link rel="canonical" href="https://maxjot.github.io/maxJOT/downloads/dmgcrack.html">
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/maxjot.css">
@@ -45,10 +45,10 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Bash In-Action</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="wlaninfo.html">wlaninfo</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="dmgcrack.html">dmgcrack</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -139,7 +139,7 @@
   <ul>
     <li><a href="../index.html">maxJOT</a></li>
     <li>Bash In-Action</li>
-    <li><a href="wlaninfo.html">wlaninfo</a></li>
+    <li><a href="dmgcrack.html">dmgcrack</a></li>
   </ul>
 </nav>
 <!-- Adding a search box -->
@@ -153,84 +153,123 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">wlaninfo</h1>
+<h1 class="page">dmgcrack</h1>
 <div class="sect1">
 <h2 id="_introduction"><a class="anchor" href="#_introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>wlaninfo.sh is a Bash command-line utility that reports detailed information about wireless LAN interfaces on Linux systems. It consolidates data that would otherwise require the use of multiple tools and methods to obtain. It shows what you need to determine performance and proper operation, and translates raw values into a human-readable format.</p>
+<p>Trying to recall the password of a macOS encrypted disk image or sparsebundle
+can be a hair-pulling exercise. After repeatedly trying passwords in vain,
+using all sorts of possible candidates, it becomes difficult to remember which
+passwords do not work. Typing mistakes and inconsistent attempts can further
+slow down the process. This is where <strong>dmgcrack</strong> comes to the rescue.</p>
 </div>
 <div class="paragraph">
-<p>wlaninfo.sh operates entirely locally without telemetry or external network communication. The --privacy flag redacts MAC addresses, SSIDs, and public TCP/IP addresses from diagnostic output to prevent exposure of sensitive information.</p>
+<p>dmgcrack tests passwords from a user-provided password list using Apple&#8217;s
+<code>hdiutil</code> utility. As such, it is not a blind brute-force password cracker,
+but rather a recovery aid that helps to test possible password candidates.
+When a valid password is found, it is displayed on screen and the process
+stops immediately.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
+<div class="paragraph">
+<p>Invalid passwords are written to <code>pwdlist.txt.invalid</code>, allowing you to
+review, edit, sort, and reconstruct password candidates more efficiently.</p>
+</div>
+<div class="paragraph">
+<p>The default password list file is <code>pwdlist.txt</code>, located in the same directory
+as dmgcrack. If the file does not exist, a sample password list is generated
+automatically and can be edited manually. A custom password list can also be
+specified using the <code>-p</code> command-line option.</p>
+</div>
+<div class="admonitionblock note">
+<table>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Product/vendor name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Interface (PCI/USB)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Kernel driver</p></td>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The program does not attempt to verify, repair, or mount the filesystem,
+as those tasks are secondary once the correct password has been identified.</p>
+</div>
+<div class="paragraph">
+<p>Remembering a password often involves more than recalling the exact phrase.
+Typing rhythm, pauses, and even the sound of pressing a particular key can
+help trigger memory of the correct password.</p>
+</div>
+<div class="paragraph">
+<p>Beware that repeated password attempts may interfere with memory of the
+current password. It is therefore advisable to make a temporary note of any
+important passwords before starting.</p>
+</div>
+</td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Power mgmt (on/off)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MAC address</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TCP/IP address</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TCP/IP v6 (on/off)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SSID (name)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Link quality</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Signal strength</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Transmit power</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Frequency</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Channel number</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Channel width</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TX speed</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">RX speed</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Wi-Fi Standard</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Est. Throughput</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Connection time</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">another test</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-</tbody>
 </table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">macOS Security Note</div>
+<div class="paragraph">
+<p>macOS attaches a quarantine attribute to downloaded ZIP archives and propagates it to extracted files.</p>
+</div>
+<div class="paragraph">
+<p>Shell scripts executed from Terminal are unaffected. However, macOS Gatekeeper will intervene when launching files from the Finder or when using drag &amp; drop while the quarantine attribute is set.</p>
+</div>
+<div class="paragraph">
+<p>To remove the quarantine attribute:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ~/Downloads
+unzip dmgcrack.zip
+xattr -d com.apple.quarantine dmgcrack.sh</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <figure class="doc-image">
-  <a href="/maxJOT/_attachments/bash/wlaninfo/1.2/screen1.png" class="glightbox">
-    <img src="/maxJOT/_attachments/bash/wlaninfo/1.2/screen1.png" alt="Example" width="300">
+  <a href="/maxJOT/_attachments/bash/dmgcrack/1.0/screen1.png" class="glightbox">
+    <img src="/maxJOT/_attachments/bash/dmgcrack/1.0/screen1.png" alt="Example" width="300">
   </a>
-  <figcaption>Example of wlaninfo.sh output</figcaption>
+  <figcaption>Example of dmgcrack.sh output</figcaption>
 </figure>
 <figure class="doc-image">
-  <a href="../_attachments/bash/wlaninfo/1.2/screen2.png" class="glightbox">
-    <img src="../_attachments/bash/wlaninfo/1.2/screen2.png" alt="Help" width="300">
+  <a href="/maxJOT/_attachments/bash/dmgcrack/1.0/screen2.png" class="glightbox">
+    <img src="/maxJOT/_attachments/bash/dmgcrack/1.0/screen2.png" alt="pwdlist" width="300">
   </a>
-  <figcaption>wlaninfo.sh help screen</figcaption>
+  <figcaption>pwdlists</figcaption>
+</figure>
+<figure class="doc-image">
+  <a href="/maxJOT/_attachments/bash/dmgcrack/1.0/screen3.png" class="glightbox">
+    <img src="/maxJOT/_attachments/bash/dmgcrack/1.0/screen3.png" alt="Example2" width="300">
+  </a>
+  <figcaption>Example2 of dmgcrack.sh output</figcaption>
+</figure>
+<figure class="doc-image">
+  <a href="/maxJOT/_attachments/bash/dmgcrack/1.0/screen4.png" class="glightbox">
+    <img src="/maxJOT/_attachments/bash/dmgcrack/1.0/screen4.png" alt="Help" width="300">
+  </a>
+  <figcaption>Help</figcaption>
 </figure>
 <div class="sect2">
 <h3 id="_downloads_and_preview"><a class="anchor" href="#_downloads_and_preview"></a>Downloads and Preview</h3>
 <form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/bash/wlaninfo/1.2/wlaninfo.sh">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/bash/dmgcrack/1.0/dmgcrack.zip">
   <button type="submit" class="hover-fill-btn">
-    <span>⬇️ Download wlaninfo.sh 1.2</span>
+    <span>⬇️ Download dmgcrack.zip 1.0</span>
   </button>
 </form>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/bash/wlaninfo/1.2/wlaninfo.sh">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/bash/dmgcrack/1.0/dmgcrack.sh">
   <button type="submit" class="hover-fill-btn">
-    <span>🔍 Preview wlaninfo.sh 1.2</span>
+    <span>🔍 Preview dmgcrack.sh 1.0</span>
   </button>
 </form>
 </div>

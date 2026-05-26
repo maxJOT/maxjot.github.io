@@ -221,23 +221,35 @@ important passwords before starting.</p>
 <p>macOS attaches a quarantine attribute to downloaded ZIP archives and propagates it to extracted files.</p>
 </div>
 <div class="paragraph">
-<p>Shell scripts executed from Terminal are unaffected. However, macOS Gatekeeper will intervene when launching files from the Finder or when using drag &amp; drop while the quarantine attribute is set.</p>
+<p>Shell scripts executed from Terminal are unaffected. However, macOS Gatekeeper intervenes when launching or opening quarantined executable content from the Finder.</p>
 </div>
 <div class="paragraph">
 <p>To remove the quarantine attribute:</p>
 </div>
 <div class="listingblock">
 <div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">xattr -d com.apple.quarantine dmgcrack.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or download via Terminal</p>
+</div>
+<div class="listingblock">
+<div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ~/Downloads
-unzip dmgcrack_suite.zip -d dmgcrack_suite
+curl -LO https://maxjot.github.io/maxJOT/_attachments/bash\
+/dmgcrack/1.1/dmgcrack_suite.zip
+unzip -o dmgcrack_suite.zip
 cd dmgcrack_suite
-xattr -d com.apple.quarantine dmgcrack.sh</code></pre>
+open ./</code></pre>
 </div>
 </div>
 </td>
 </tr>
 </table>
 </div>
+<div class="sect2">
+<h3 id="_screenshots"><a class="anchor" href="#_screenshots"></a>Screenshots</h3>
 <figure class="doc-image">
   <a href="/maxJOT/_attachments/bash/dmgcrack/1.1/screen1.png" class="glightbox">
     <img src="/maxJOT/_attachments/bash/dmgcrack/1.1/screen1.png" alt="Example" width="300">
@@ -262,6 +274,7 @@ xattr -d com.apple.quarantine dmgcrack.sh</code></pre>
   </a>
   <figcaption>Help</figcaption>
 </figure>
+</div>
 <div class="sect2">
 <h3 id="_downloads_and_preview"><a class="anchor" href="#_downloads_and_preview"></a>Downloads and Preview</h3>
 <form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">

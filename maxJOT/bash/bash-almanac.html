@@ -213,9 +213,7 @@ The snippets are self-contained and can be copied directly into your own scripts
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/usr/bin/env bash
-
-function term_init {
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">function term_init {
   #
   # Assign useful terminal sequences that are compatible with any
   # 256-color VGA terminal, if available. There is, however, no
@@ -313,9 +311,7 @@ function term_init {
       fi
     ;;
   esac
-}
-
-## END</code></pre>
+}</code></pre>
 </div>
 </div>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
@@ -342,7 +338,7 @@ function term_init {
 <h2 id="_boxes_and_borders"><a class="anchor" href="#_boxes_and_borders"></a>Boxes and Borders</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>box</code> function generates text boxes using Unicode box-drawing characters, optional color schemes, and flexible line formatting modes. These are useful for displaying messages that require special user attention.</p>
+<p>The <code>box</code> function generates text boxes using box-drawing characters, optional color schemes, and flexible line formatting modes. These are useful for displaying messages that require special user attention.</p>
 </div>
 <div class="paragraph">
 <p>The function draws the box line by line and overlays the desired text, giving the user full control over the final appearance. Long lines can be split manually to match the preferred console width or programming style.</p>
@@ -352,23 +348,21 @@ function term_init {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/usr/bin/env bash
-
-function mute {
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">function mute {
   # Optional feature to suppress keyboard and cursor output
   # when it can interfere with proper box and content rendering.
   #
-  # $1 on:  Hide cursor, disable terminal echo, disable ctrl/s/q/c/d.
+  # $1 on:  Hide cursor, disable terminal echo, disable CTRL/C/D/Z.
   #         Stop user/keyboard interference while rendering screen output.
   # $1 off: Restore previously saved terminal state.
   #
   local hc=$( tput civis ); local rc=$( tput cnorm )
   #
   case $1 in
-   on) SAV=$( stty -g &lt;/dev/tty )  # Save tty settings. Global scope.
-       stty -echo -icanon -ixoff intr '?' eof '?' &lt;/dev/tty
+   on) sav_0=$( stty -g &lt;/dev/tty )  # Save tty settings. Global scope.
+       stty -echo -icanon susp '?' intr '?' eof '?' &lt;/dev/tty
        printf ${hc} ;;
-   off) stty ${SAV} &lt;/dev/tty
+   off) stty ${sav_0} &lt;/dev/tty
         printf ${rc} ;;
   esac
 }
@@ -384,7 +378,7 @@ function box {
   #          box r "The rabbit jumps over the fox" 1
   #          box r "and escapes."
   #          box r --middle
-  #          box r "http://maxjot.github.io/maxJOT/bash/bash-almanac.html"
+  #          box r "https://maxjot.github.io/maxJOT/ref/boxes_and_borders"
   #          box r --bottom
   #
   # Note: lastarg_0 = global mutable.
@@ -439,9 +433,7 @@ function box {
          lastarg_0=0 ;;
     esac
   fi
-}
-
-## END</code></pre>
+}</code></pre>
 </div>
 </div>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
@@ -475,12 +467,12 @@ function box {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/usr/bin/env bash
-
-function get_reply {
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">function get_reply {
   # Arguments:
   #   $1=prompt.
   #   $2=valid options (optional).
+  # Output:
+  #   $REPLY=option
   # Examples:
   #   get_reply "Press menu option:" "E 1 2 3 4"
   #   get_reply "Press any key to continue..."
@@ -492,17 +484,13 @@ function get_reply {
   #
   # `read -t 0.1' causes an invalid timeout specification error
   # if not Bash 4 or later. Use 1 under Bash 3, which will still work
-  # to flush the keyboard buffer, but cause a &gt; 1 second delay.
+  # to flush the keyboard buffer, but cause a 1 second delay.
   #
-  local tries=0 option prompt answer indent
+  local tries=0 option prompt answer indent timeout
   local sav=$(stty -g &lt;/dev/tty)
   local hc=$(tput civis) rc=$(tput cnorm) u1=$(tput cuu1) ed=$(tput ed)
   local b1=$(tput bold; tput setaf 1) t0=$(tput sgr0)
-  #
-  if [[ ! ${BASH_VERSINFO:-0} -ge 4 ]]; then
-    printf "\n${b1} \`get_reply' requires Bash 4 or later.${t0}\n"
-    timeout=1
-  fi
+  [[ ${BASH_VERSINFO:-0} -ge 4 ]] &amp;&amp; timeout=0.1 || timeout=1
   # Restore cursor and cleanup prior to exiting the menu.
   opt_cleanup() {
     stty ${sav} &lt;/dev/tty; printf ${rc}; unset -f opt_msg opt_cleanup; }
@@ -530,10 +518,13 @@ function get_reply {
     # Flush the keyboard buffer.
     stty -icanon -echo &lt;/dev/tty
     read -r -t ${timeout:-0.1} -s --
-    # Disable ctrl/s/q/c/d and set stdin to interactive mode.
-    stty icanon echo -ixoff intr '?' eof '?' &lt;/dev/tty
+    stty icanon echo &lt;/dev/tty # Set stdin to interactive mode.
+    # Disable CTRL-D, CTRL-Z and CTRL-C (Requires read -e to function).
+    stty susp '?' intr '?' eof '?' &lt;/dev/tty
     echo -en "${rc}${prompt}${ed}"
-    read -r -e -n 1 -p " " answer
+    # Read directly from the terminal when stdin is already
+    # consumed by an outer while read loop or pipeline.
+    read -r -e -n 1 -p " " answer &lt;/dev/tty 2&gt;/dev/tty
     answer=$(printf '%s' "${answer}" | tr '[:lower:]' '[:upper:]')
     # No valid options = any key to continue.
     [[ -z ${2} ]] &amp;&amp; { opt_cleanup; REPLY=${answer}; return 0; }
@@ -554,9 +545,7 @@ function get_reply {
     fi
     stty ${sav} &lt;/dev/tty
   done
-}
-
-## END</code></pre>
+}</code></pre>
 </div>
 </div>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
@@ -638,54 +627,103 @@ actions associated with selected options.</p></td>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/usr/bin/env bash
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IAM=( ${BASH_SOURCE[0]##*/} 2.0 )
 
-IAM=( ${BASH_SOURCE[0]##*/} 1.1 )
+# Exit vs. return if source executed. Create a snapshot of
+# variables and functions when source executed, so we can use
+# this information later to restore the shell environment when
+# executing the cleanup function.
+#
+if ( return 0 2&gt;/dev/null ); then
+  SOURCED=1
+  ENV_VARIABLES=$( compgen -v )
+  ENV_FUNCTIONS=$( compgen -A function )
+else
+  SOURCED=0
+fi
 
-# Address exit vs. return if source executed.
-( return 0 2&gt;/dev/null ) &amp;&amp; sourced=1 || sourced=0
-
-function help {
+function show_help {
   echo "Usage:
-  ${IAM} [-h | -v] [-d level] source [-o output filename]"
+  ${IAM} [--install | --uninstall]
+  ${IAM} [-h | --help | --version | --changelog]
+  ${IAM} [-x &lt;type&gt;] [-d] [-v] &lt;target&gt; [-o &lt;directory&gt;]
+  ${IAM} [-x &lt;type&gt;] [-d] [-v] [-t] &lt;target&gt;"
   echo
+  echo "Options:
+  -h, --help                 show this help screen
+      --version              show version
+      --changelog
+      --install              install this program
+      --uninstall            uninstall this program
+  -d, --debug                debug mode
+  -o, --outdir &lt;directory&gt;   write output to directory
+  -t, --test                 test run (no output)
+  -v, --verbose              verbose operation
+  -x, --extract &lt;type&gt;       extraction types:
+                               0 audio
+                               1 images
+                               2 video
+                               3 all of the above (default)"
   echo "Arguments:
-  -h, --help               show help
-  -v, --version            show version
-  -d, --demo level         demo level (0-3)
-  -o, --output filename    write output to filename
-  source                   source filename"
+  &lt;target&gt;                   file to process"
   echo
   echo "Examples:
-  ${IAM} -d 1 sample.txt
-  ${IAM} -d 1 sample.txt -o sample.out"
+  ${IAM} -dvx 1 sample.bin -o ~/Desktop"
   echo
   echo "Description:
-  Simple example how to parse command line arguments."
+  Demonstrates command-line argument parsing.
+  URL: https://maxjot.github.io/maxJOT/bash/bash-almanac.html"
   echo
 }
 
-function version {
+function show_version {
   echo "Version ${IAM[1]}"
   echo
-  echo "Copyright (c) 2024-2026 maxJOT. All Rights Reserved."
+  echo "Copyright (c) 2026 maxJOT. All Rights Reserved."
   echo "Free to use but not for sale. No redistribution of modified"
   echo "copies. https://maxjot.github.io/maxJOT/license_maxjot.html"
   echo
 }
 
+function run_install {
+  echo
+  msg I install "placeholder"
+  echo
+}
+
+function run_uninstall {
+  echo
+  msg I uninstall "placeholder"
+  echo
+}
+
+function show_changelog {
+  echo "Changelog:
+  Initial version 1.0 (15-Mar-2026)
+  Version 2.0 (26-MAY-2026)
+    - changing variable scope and naming
+    - changing demo example
+    - revisiting documentation sections
+    - various coding and workflow changes
+    - new validate section"
+  echo
+}
+
 function msg {
-  #
   # Coherent messaging for errors and information.
   # (https://maxjot.github.io/maxJOT/bash/bash-almanac.html)
   # $1 = Severity E W I
   # $2 = Function or facility (optional)
   # $3 = Text (optional)
-  local iam opt cln fac= str=
+  #
+  local b1 t0 iam opt cln fac= str=
+  b1=$( tput bold; tput setaf 1)
+  t0=$( tput sgr0 )
   cln="${BASH_LINENO[0]}" # Caller line number.
   iam="${IAM%.sh}"
   [[ -n $2 ]] &amp;&amp; fac=", $2"
   [[ -n $3 ]] &amp;&amp; str=", $3"
+  [[ $1 == E ]] &amp;&amp; str=", ${b1}$3${t0}"
   opt="${fac}${str}"
   case "$1" in
     E) printf "%%%s-E-%s%s\n\a" "${iam}" ${cln} "${opt}" &gt;&amp;2 ;;
@@ -696,261 +734,523 @@ function msg {
 }
 
 function cleanup {
-    unset -f help version msg
-    unset v_0 h_0 d_0 o_0 outfile_0 source_0 level_0 args_0 combine
-    unset sourced consolidate nomatch char item i IAM B1 T0 RG
+    # Avoid tainting the calling shell environment with variables
+    # and functions created by this script when source executed.
+    # Be sure not to remove variables before functions!
+    #
+    local item
+    while IFS= read -r item; do
+      unset -f ${item}
+    done &lt; &lt;( awk 'FNR==NR{a[$0]++;next}!($0 in a)' - \
+                &lt;&lt;&lt; "${ENV_FUNCTIONS}" &lt;( compgen -A function ) )
+    while IFS= read -r item; do
+      unset ${item}
+    done &lt; &lt;( awk 'FNR==NR{a[$0]++;next}!($0 in a)' - \
+                &lt;&lt;&lt; "${ENV_VARIABLES}" &lt;( compgen -v ) )
+    unset IAM
     unset -f cleanup
 }
 
+function phase_init {
+  # Requires $LOPTS[] = list of long options, e.g.: help version.
+  # Create a copy of the command-line arguments (args_0[]) for later
+  # phases to work with (process/consume) and initialize all long option
+  # arguments (--option) e.g.: help_0=0 version_0=0.
+  #
+  args_0=("$@")
+  #
+  # Save the original number of command-line arguments.
+  # Later phases (phase 4) may use this value for boundary checks after
+  # consumed arguments have been removed from args_0[].
+  #
+  LAST_INDEX=$#
+  local var option
+  for option in "${LOPTS[@]}"; do
+    var="${option}_0"
+    printf -v "${var}" '%d' 0
+  done
+}
+
+function payload_init {
+  # $1 = List of payload variables, e.g.: payload_init "type directory"
+  # Create local payload variables (type_0= directory_0= ), but do not
+  # override existing variables.
+  #
+  local option var
+  for option in $1; do
+    var="${option}_0"
+    [[ -z ${!var} ]] &amp;&amp; printf -v "${option}_0" '%s' ''
+  done
+}
+
+function validate_option_sets() {
+  # Validate that all options from LOPTS set to 1 belong to the same
+  # option set defined in option_sets_0. Any selected option outside
+  # that option set is considered an invalid combination.
+  #
+  local allowed applicable invalid=
+  local option var
+
+  for allowed in "${option_sets_0[@]}"; do
+    applicable=0
+    invalid=
+    # Determine whether any option in this option set is set to 1.
+    # If all variables are 0, then there is nothing to validate.
+    #
+    for option in ${allowed}; do
+      var="${option}_0"
+      (( ${!var} )) &amp;&amp; { applicable=1; break; }
+    done
+    # Nothing to validate if $allowed includes no options set to 1.
+    #
+    (( applicable )) || continue
+    # Any selected option from LOPTS that is not part of the current
+    # option set is considered an invalid combination.
+    #
+    for option in "${LOPTS[@]}"; do
+      var="${option}_0"
+      (( ${!var} )) || continue
+      [[ " ${allowed} " == *" ${option} "* ]] || invalid+=" --${option}"
+    done
+    if [[ -n ${invalid} ]]; then
+      echo
+      msg E args "invalid combination of options"
+      msg I "Conflicting option(s): ${invalid# }"
+      msg I "try \`${IAM} --help'"
+      echo
+      return 1
+    fi
+  done
+}
+
+function phase1_error_lopts {
+  # After stripping the first two characters from the command-line
+  # arguments args_0[], the remainder is matched against valid
+  # long-option names LOPTS[] with their first character removed.
+  # A match e.g. "elp" means that the command-line argument is an
+  # invalid long option missing a dash (-), such as -help.
+  #
+  local args option i
+  args=$( for option in "${LOPTS[@]}"; do printf '%s|' "${option:1}"; done )
+  args=${args%|}  # Remove last |.
+  for i in "${args_0[@]}"; do
+    if grep -iqwE -- ${args} &lt;&lt;&lt; ${i:2}; then
+      echo
+      msg E args "invalid command-line argument"
+      msg I "invalid long option detected: $i"
+      msg I "try \`${IAM} --help'"
+      echo
+      return
+    fi
+  done
+  return 1
+}
+
+function args_remaining {
+  # Any remaining entries in args_0 represent unrecognized arguments
+  # and are treated as invalid input.
+  #
+  if (( ${#args_0[@]} &gt; 0 )); then
+    echo
+    msg E args "invalid command-line argument"
+    msg I "argument(s): ${args_0[*]}"
+    msg I "try \`${IAM} --help'"
+    echo
+  else
+    return 1 # Reverse status
+  fi
+}
+
+function phase2_action {
+  # Executes actions associated with enabled Phase 2 options.
+  # Each enabled option maps to a corresponding *_ACTION handler.
+  #
+  status_0=0 # Default return status of actions.
+  for option in "${LOPTS[@]}"; do
+    var="${option}_0"
+    (( ${!var} )) || continue
+    action="$(printf '%s' "${option}_ACTION" | tr '[:lower:]' '[:upper:]')"
+    "${!action}"
+  done
+}
+
+function phase4_duplicate {
+  # $1 $2 = Short and long option to check, e.g. "-x" "--extract"
+  #
+  local round=0
+  for i in "${!args_0[@]}"; do
+    case "${args_0[i]}" in
+      "$1"|"$2") round=$(( round + 1 ))
+        if (( round &gt; 1 )); then
+          echo
+          msg E args "invalid duplicate option"
+          msg I "Conflicting option: ${args_0[i]} ${args_0[i+1]}"
+          msg I "try \`${IAM} --help'"
+          echo
+          (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
+        fi ;;
+    esac
+  done
+}
+
+function chk_file {
+  # requires global variable name.
+  local var=$1
+  local file="${!var}"
+  local name=${var%_0}
+  if [[ -z ${file} ]]; then
+    echo
+    msg E args "${name} not specified"
+    msg I "try \`${IAM} --help'"
+    echo
+    return 1
+  elif [[ -d ${file} ]]; then
+    echo
+    msg E args "${name} cannot be a directory"
+    msg I "directory: ${file}"
+    msg I "try \`${IAM} --help'"
+    echo
+    return 1
+  elif [[ ! -e ${file} ]]; then
+    echo
+    msg E args "${name} not found"
+    msg I "file: ${file}"
+    msg I "try \`${IAM} --help'"
+    echo
+    return 1
+  fi
+}
+
+function chk_directory {
+  # requires global variable name.
+  local var=$1
+  local directory="${!var}"
+  if [[ ! -e ${directory} ]]; then
+    echo
+    msg E args "directory does not exist"
+    msg I "directory: ${directory}"
+    msg I "try \`${IAM} --help'"
+    echo
+    return 1
+  elif [[ ! -d ${directory} ]]; then
+    echo
+    msg E args "not a directory"
+    msg I "directory: ${directory}"
+    msg I "try \`${IAM} --help'"
+    echo
+    return 1
+  fi
+}
 
 # MAIN #
 
-# ----------------------------------------------------------------------------
-# Phase 1 detects and rejects invalid long options that use a single
-# dash (-) instead of two dashes (--). Word matching after removing
-# the first two characters is used to detect these invalid forms.
-# ----------------------------------------------------------------------------
-#
-for i in "$@"; do
-  if grep -iqwE -- 'emo|ersion|elp|utput' &lt;&lt;&lt; ${i:2}; then
-    echo
-    msg E args "invalid command line argument"
-    msg I "invalid long option detected: ${i}"
-    msg I "try \`${IAM} --help'"
-    echo
-    (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
-  fi
-done
+# ---------------------------------------------------------------------------
+# Phase 1 uses the LOPTS[] array to initialize all supported long option
+# variables and rejects long options arguments, that are written with a
+# single dash (-) instead of two dashes (--), e.g.: -help vs. --help.
+# ---------------------------------------------------------------------------
 
-# ----------------------------------------------------------------------------
-# Phase 2 parses simple short and long command-line options, such as
-# -h, --help and -v, --version. These options may also be combined
-# into a single argument, such as -hv or -vh. When recognized, the
-# corresponding variables (h_0, v_0) are set to 1 and the matching
-# option characters are removed from the argument list.
+# The LOPTS array lists all supported long options (--option).
 #
-# Options may appear multiple times and in any order without causing
-# any ill effects. Duplicate matches simply repeat setting the
-# corresponding variables to 1. For example, -hv, -hhvv and -hvhhv
-# all produce the same result.
+LOPTS=( version help changelog install uninstall
+        debug extract verbose test outdir )
+
+phase_init "$@"
+
+if phase1_error_lopts; then
+    (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# Phase 2 handles command-line arguments that comply to information
+# standards, such as --help, --version, etc. Such tasks terminate upon
+# completion and do not need to involve the parsing of options related
+# to a program's actuall purpose or operation.
 #
-# Any character inside a combined option that is not recognized by
-# this parsing phase is extracted and reconstructed as a new command-
-# line option for further processing during phase 3. For example:
-#
-#   -hvd 2  =&gt; h_0=1, v_0=1, -d 2
-#   -hvcd 2 =&gt; h_0=1, v_0=1, -cd 2
-# ----------------------------------------------------------------------------
-#
-declare -a args_0=("$@")
-h_0=0 v_0=0
+# Recognized options are consumed from args_0 and mapped to state
+# variables and/or actions. Any remaining entries in args_0 after
+# processing are considered invalid.
+# ---------------------------------------------------------------------------
 
 for i in "${!args_0[@]}"; do
   case "${args_0[i]}" in
-    -h|--help) h_0=1; args_0[i]= ;;
-    -v|--version) v_0=1; args_0[i]= ;;
-    -[hv]*)
-      # Support a combination of arguments.
+    -h|--help)   help_0=1
+                 HELP_ACTION=show_help
+                 unset args_0[i] ;;
+    --changelog) changelog_0=1
+                 CHANGELOG_ACTION=show_changelog
+                 unset args_0[i] ;;
+    --version)   version_0=1
+                 VERSION_ACTION=show_version
+                 unset args_0[i] ;;
+    --install)   install_0=1
+                 INSTALL_ACTION=run_install
+                 unset args_0[i] ;;
+    --uninstall) uninstall_0=1
+                 UNINSTALL_ACTION=run_uninstall
+                 unset args_0[i] ;;
+  esac
+done
+
+# The option_set array defines one or more option sets that are mutually
+# exclusive with all other command-line options. An option set may consist
+# of a single option or multiple options. When a set consists of multiple
+# options, the options within that set are not mutually exclusive and may
+# be combined. For example:
+#
+# install
+#   The --install option is mutually exclusive and may not be combined
+#   with any other command-line argument.
+#
+# help version changelog
+#   Any combination of --help, --version, and --changelog is valid,
+#   but may not be combined with any other command-line argument.
+#
+option_sets_0=( 'install' 'uninstall' 'help version changelog' )
+
+# At least one info/admin option was consumed.
+#
+if (( ${#args_0[@]} &lt; ${LAST_INDEX} )); then
+  # Consider any remaining arguments invalid
+  #
+  if args_remaining; then
+    (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
+  fi
+  # Check invalid combinations if info/admin args apply.
+  #
+  if ! validate_option_sets; then
+    (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
+  fi
+  # Continue executing the appropriate functions and exit the program.
+  #
+  phase2_action
+  (( SOURCED )) &amp;&amp; { \cleanup; return ${status_0}; } || exit ${status_0}
+fi
+
+# ---------------------------------------------------------------------------
+# Phase 3 parses simple short and long options, such as -v, --verbose or
+# -d, --debug. Short options may also be combined into a single argument,
+# such as -dv or -vd. When matched, the corresponding variables are set
+# to 1 and the appropriate arguments are consumed from args_0[].
+#
+# Options may appear multiple times and in any order. Duplicate matches
+# simply repeat setting the corresponding variables to 1.
+#
+# Phase 3 only handles options that require no additional parameter.
+# Any character within a combined short option that is not recognized by
+# this phase is reconstructed as a new command-line argument and left for
+# subsequent parsing phases. For example:
+#
+#   -dvx 2         =&gt;  debug_0=1, verbose_0=1, -x 2
+#   --abc -vdcx 2  =&gt;  debug_0=1, verbose_0=1, -cx 2 --abc
+# ---------------------------------------------------------------------------
+
+for i in "${!args_0[@]}"; do
+  case "${args_0[i]}" in
+    -d|--debug) debug_0=1; unset args_0[i] ;;
+    -t|--test) test_0=1; unset args_0[i] ;;
+    -v|--verbose) verbose_0=1; unset args_0[i] ;;
+    -[dtv]*)
+      # Support combined arguments.
+      #
       bundle="${args_0[i]#-}"
       nomatch=
       for (( j=0; j&lt;${#bundle}; j++ )); do
         char="${bundle:j:1}"
         case "${char}" in
-          h) h_0=1 ;;
-          v) v_0=1 ;;
+          d) debug_0=1 ;;
+          t) test_0=1 ;;
+          v) verbose_0=1 ;;
           *) nomatch+="${char}" ;;
         esac
       done
-      # Remove matching options or create new options.
-      [[ -n ${nomatch} ]] &amp;&amp; args_0[i]="-${nomatch}" || args_0[i]=
+      # Consume recognized option letters and keep any unrecognized
+      # letters as a single dash-prefixed argument. e.g.: -dave =&gt; -ae
+      # This also permits mixed bundles such as -dvx 2 and -dxv 2,
+      # both of which become -x 2 and are handled by the subsequent
+      # parser phase for options that take a parameter.
+      #
+      [[ -n ${nomatch} ]] &amp;&amp; args_0[i]="-${nomatch}" || unset args_0[i]
     ;;
   esac
 done
 
-# ----------------------------------------------------------------------------
-# Phase 3 parses dash (-) options that have not yet been consumed by
-# any of the previous parsing phases. Unlike simple options, these
-# require an additional argument or parameter to be valid, such as a
-# number, word, or filename.
+# ---------------------------------------------------------------------------
+# Phase 4 parses dash (-) options that have not yet been consumed by
+# any the previous parsing phase and require an additional argument or
+# parameter to be valid, such as a number, word, or directory.
 #
 # Valid options and parameters are assigned to variables and consumed
 # from the argument list, just like in the previous parsing phases.
-# These options must not be the last argument in the list but may occur
-# in any order and may be specified multiple times without ill effects,
-# other than reassigning the corresponding variables. For example:
+# These options may occur in any order, but unlike simple options are
+# NOT allowed to be specified multiple times.
 #
-#   -d 1 -d 3   =&gt; d_0=1, level_0=3
-#   -o filename =&gt; o_0=1, outfile_0=filename
-# ----------------------------------------------------------------------------
+# The actual payload of these variables. e.g. --extract 3, where 3 is the
+# payload, will need to be stored in additional variables, e.g. type_0.
+# For example:
 #
-d_0=0 level_0=0 o_0=0 outfile_0=0
+#   -x 1                =&gt;  extract_0=1, type_0=1
+#   --outdir ~/Desktop  =&gt;  outdir_0=1, directory_0=~/Desktop
+# ---------------------------------------------------------------------------
+
+payload_init "type directory"
+
+phase4_duplicate "-x" "--extract"
 #
 for i in "${!args_0[@]}"; do
-  if [[ ${d_0} = 1 ]]; then
+  if [[ ${extract_0} = 1 ]]; then
     case "${args_0[i]}" in
-      [0-3]) level_0=${args_0[i]}; args_0[i]=; break ;;
+      [0-3]) type_0=${args_0[i]}; unset args_0[i]; break ;;
       *) echo
-         msg E args "invalid demo level"
-         msg I "level: ${args_0[i]}"
+         msg E args "invalid extraction type"
+         msg I "type: ${args_0[i]}"
          msg I "try \`${IAM} --help'"
          echo
-         (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1 ;;
+         (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1 ;;
     esac
   else
     case "${args_0[i]}" in
-      -d|--demo) # Must not be the last argument
-        if (( i + 1 &lt; ${#args_0[@]} )); then
-          d_0=1; args_0[i]=
+      -x|--extract)
+        # Must not be the last argument
+        #
+        if (( i + 1 &lt; ${LAST_INDEX} )); then
+          extract_0=1; unset args_0[i]
         else
           echo
-          msg E args "missing demo level"
+          msg E args "missing extraction type"
           msg I "try \`${IAM} --help'"
           echo
-          (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+          (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
         fi ;;
     esac
   fi
 done
 
+phase4_duplicate "-o" "--outdir"
+#
 for i in "${!args_0[@]}"; do
-  if [[ ${o_0} = 1 ]]; then
+  if [[ ${outdir_0} = 1 ]]; then
     case "${args_0[i]}" in
       -*) echo
-          msg E args "invalid filename"
-          msg I "filename: ${args_0[i]}"
+          msg E args "invalid directory name"
+          msg I "directory: ${args_0[i]}"
           msg I "try \`${IAM} --help'"
           echo
-          (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1 ;;
-       *) outfile_0="${args_0[i]}"; args_0[i]=; break ;;
+          (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1 ;;
+       *) directory_0="${args_0[i]}"; unset args_0[i]; break ;;
     esac
   else
     case "${args_0[i]}" in
-      -o|--output) # Must not be the last argument.
-        if (( i + 1 &lt; ${#args_0[@]} )); then
-          o_0=1; args_0[i]=
+      -o|--outdir)
+        # Must not be the last argument.
+        #
+        if (( i + 1 &lt; ${LAST_INDEX} )); then
+          outdir_0=1; unset args_0[i]
         else
           echo
-          msg E args "missing output filename"
+          msg E args "missing output directory name"
           msg I "try \`${IAM} --help'"
           echo
-          (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+          (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
         fi ;;
     esac
   fi
 done
 
-# ----------------------------------------------------------------------------
-# Phase 4 parses stand-alone command-line arguments that are neither
+# ---------------------------------------------------------------------------
+# Phase 5 parses stand-alone command-line arguments that are neither
 # dash (-) options nor option parameters, such as keywords or filenames.
 #
-# At this stage, all valid command-line arguments should have been
-# assigned to variables, and their corresponding array elements are empty.
-#
-# Finally, consolidate the array by removing all empty (consumed) elements
-# and consider any remaining elements as invalid.
-# ----------------------------------------------------------------------------
-#
-source_0=
-#
+# At this stage, all valid command-line options and arguments should have
+# been consumed and variables.
+# ---------------------------------------------------------------------------
+
+payload_init "target"
+
 for i in "${!args_0[@]}"; do
   case "${args_0[i]}" in
     "") continue ;; # Ignore empty array elements.
     -*) continue ;; # Ignore dash (-) options.
-    *) source_0="${args_0[i]}"; args_0[i]=; break ;;
+    *) target_0="${args_0[i]}"; unset args_0[i]; break ;;
   esac
 done
 
-# Consolidate the list of command line arguments by
-# removing empty (consumed) array elements.
+# Consider any remaining arguments invalid
 #
-declare -a consolidate=()
-for item in "${args_0[@]}"; do
-    [[ -n "${item}" ]] &amp;&amp; consolidate+=( "${item}" )
-done
-
-# Any remaining command line arguments are invalid.
-#
-if (( ${#consolidate[@]} &gt; 0 )); then
-  echo
-  msg E args "invalid argument"
-  msg I "argument(s): ${consolidate[@]}"
-  msg I "try \`${IAM} --help'"
-  echo
-  (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+if args_remaining; then
+  (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
 fi
 
-# ----------------------------------------------------------------------------
-# Phase 5 determines which command-line arguments are mandatory and
-# which options are mutually exclusive. Since validated option flags
-# are either set to 1 or remain at 0, simple arithmetic can be used
-# to detect invalid combinations.
-#
-# This final phase also verifies required filenames and executes
-# help or version functions according to the specified option flags.
-# ----------------------------------------------------------------------------#
-(( h_0 + v_0 &gt; 1 )) &amp;&amp; combine=invalid
-(( h_0 + v_0 + d_0 &gt; 1 )) &amp;&amp; combine=invalid
-(( h_0 + v_0 + o_0 &gt; 1 )) &amp;&amp; combine=invalid
+# ---------------------------------------------------------------------------
+# Phase 6 validates relationships between parsed command-line arguments,
+# such as mandatory arguments, incompatible argument combinations, and
+# argument sanity checks as required. For example:
+# ---------------------------------------------------------------------------
 
-if [[ ${combine} == invalid ]]; then
-    echo
-    msg E args "invalid combination of arguments"
-    msg I "try \`${IAM} --help'"
-    echo
-    (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+# Option --test and --outdir are mutually exclusive.
+#
+if (( test_0 )); then
+  option_sets_0=( 'verbose debug extract test' )
+  if ! validate_option_sets; then
+    (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
+  fi
 fi
 
-# Display help and version as requested.
+# Assign extract and type default.
 #
-(( h_0 )) &amp;&amp; { \help; (( sourced )) &amp;&amp; { \cleanup; return; } || exit; }
-(( v_0 )) &amp;&amp; { \version; (( sourced )) &amp;&amp; { \cleanup; return; } || exit; }
+[[ ${extract_0} -eq 0 ]] &amp;&amp; { type_0=3; }
 
-# Source variable is mandatory, file must exist.
+# Target is mandatory, file must exist.
 #
-if [[ -z ${source_0} ]]; then
-  echo
-  msg E args "missing source filename"
-  msg I "try \`${IAM} --help'"
-  echo
-  (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
-elif [[ ! -e ${source_0} ]]; then
-  echo
-  msg E args "file not found"
-  msg I "file: ${source_0}"
-  msg I "try \`${IAM} --help'"
-  echo
-  (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+if ! chk_file target_0; then
+  (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
 fi
 
+# Output directory (-o) when specified must be a directory.
+#
+if [[ ${outdir_0} -eq 1 ]]; then
+  if ! chk_directory directory_0; then
+     (( SOURCED )) &amp;&amp; { \cleanup; return 1; } || exit 1
+  fi
+fi
+
+# Proceed with showing the results.
+#
 echo
-echo "Parsed command line arguments:"
-echo "------------------------------"
-echo "source:   ${source_0}"
-echo "output    ${o_0}"
-echo "outfile:  ${outfile_0}"
-echo "demo:     ${d_0}"
-echo "level:    ${level_0}"
-
-cleanup
-
-## END</code></pre>
+echo "RESULT"
+echo "------"
+echo
+printf "Command-line arguments:\n\n%s\n\n" "$*"
+printf "Parsed options:\n\n"
+printf "%-20s%s\n" "Source execution:" ${SOURCED}
+printf "%-20s%s\n" target: "${target_0}"
+printf "%-20s%s" "extract type:" "${type_0}"
+(( extract_0 )) &amp;&amp; printf "\n" || printf " (default)\n"
+(( test_0 )) &amp;&amp; printf "%-20s%s\n" "test mode:" on
+(( outdir_0 )) &amp;&amp; printf "%-20s%s\n" "output directory:" "${directory_0}"
+printf "%-20s%s\n" outdir: ${outdir_0}
+printf "%-20s%s\n" test: ${test_0}
+printf "%-20s%s\n" debug: ${debug_0}
+printf "%-20s%s\n" verbose: ${verbose_0}
+#
+(( SOURCED )) &amp;&amp; cleanup</code></pre>
 </div>
 </div>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/args_example.sh">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/args_example/2.0/args_example.sh">
   <button type="submit" class="hover-fill-btn">
     <span>🔍 Preview args_example</span>
   </button>
 </form>
 <form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/args_example_suite.zip">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/args_example/1.0/args_example_suite.zip">
   <button type="submit" class="hover-fill-btn">
     <span>⬇️ Download args_example suite</span>
   </button>
 </form>
 <figure class="doc-image">
-  <a href="/maxJOT/_attachments/almanac/args_example.mp4" class="glightbox" data-type="video">
-    <img src="/maxJOT/_attachments/almanac/args_example.png" alt="" width="300">
+  <a href="/maxJOT/_attachments/almanac/args_example/1.0/args_example.mp4" class="glightbox" data-type="video">
+    <img src="/maxJOT/_attachments/almanac/args_example/1.0/args_example.png" alt="" width="300">
   </a>
   <figcaption>args_example demo</figcaption>
 </figure>
@@ -988,18 +1288,20 @@ cleanup
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">function msg {
+  # Arguments: $1 = Severity E W I
+  #            $2 = Function or facility (optional)
+  #            $3 = Text (optional)
+  # URL: https://maxjot.github.io/maxJOT/ref/coherent_messaging.html
   #
-  # Coherent messaging for errors and information.
-  # (https://maxjot.github.io/maxJOT/bash/bash-almanac.html)
-  # $1 = Severity E W I
-  # $2 = Function or facility (optional)
-  # $3 = Text (optional)
-  local iam opt cln fac= str=
+  local b1 t0 iam opt cln fac= str=
+  b1=$( tput bold; tput setaf 1)
+  t0=$( tput sgr0 )
   cln="${BASH_LINENO[0]}" # Caller line number.
   iam="${BASH_SOURCE[0]##*/}"
   iam="${iam%.sh}"
   [[ -n $2 ]] &amp;&amp; fac=", $2"
   [[ -n $3 ]] &amp;&amp; str=", $3"
+  [[ $1 == E ]] &amp;&amp; str=", ${b1}$3${t0}"
   opt="${fac}${str}"
   case "$1" in
     E) printf "%%%s-E-%s%s\n\a" "${iam}" ${cln} "${opt}" &gt;&amp;2 ;;

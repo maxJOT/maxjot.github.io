@@ -201,14 +201,29 @@ would normally be entered at the shell prompt.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">PROMPT demo:~ user$
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#----------------------------------------------------------------------
+# Filename: screenplay.run
+# Purpose:  Default runfile used by screenplay.sh
+#           This sample file has been auto-generated.
+# URL:      https://maxjot.github.io/maxJOT/downloads/screenplay.html
+#----------------------------------------------------------------------
+# empty line     Prints the command prompt (simulates Return).
+#                Lines beginning with '#' are ignored (comments).
+# PAUSE          Pause for N seconds (default: 3).
+# EXEC           Execute a script within screenplay's context:
+#                source screenplay.sh -&gt; source script.sh, e.g.:
+#                EXEC script.sh
+# PROMPT         Set the virtual command prompt, e.g.:
+#                PROMPT Saturn:~ dude$
+#----------------------------------------------------------------------
+PROMPT Saturn:~ dude$
 
-echo "Preparing demo"
+echo "Hello screenplay!"
+echo "Pause for 3 seconds"
 PAUSE
+EXEC args_example.sh -dtv screenplay.sh
 
-source ./setup.sh
-
-echo "Starting recording"</code></pre>
+echo "press Return to exit the demo."</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -296,30 +311,45 @@ excellent for automation. screenplay.sh is designed for something
 different: making an automated terminal session look and behave like a
 human-driven interactive session.</p>
 </div>
+<div class="sect2">
+<h3 id="_screenshots"><a class="anchor" href="#_screenshots"></a>Screenshots</h3>
 <figure class="doc-image">
-  <a href="/maxJOT/_attachments/bash/wlaninfo/1.2/screen1.png" class="glightbox">
-    <img src="/maxJOT/_attachments/bash/wlaninfo/1.2/screen1.png" alt="Example" width="300">
+  <a href="/maxJOT/_attachments/bash/screenplay/1.0/screen1.png" class="glightbox">
+    <img src="/maxJOT/_attachments/bash/screenplay/1.0/screen1.png" alt="Startup" width="300">
   </a>
-  <figcaption>Example of wlaninfo.sh output</figcaption>
+  <figcaption>screenplay start</figcaption>
 </figure>
 <figure class="doc-image">
-  <a href="../_attachments/bash/wlaninfo/1.2/screen2.png" class="glightbox">
-    <img src="../_attachments/bash/wlaninfo/1.2/screen2.png" alt="Help" width="300">
+  <a href="/maxJOT/_attachments/bash/screenplay/1.0/screen2.png" class="glightbox">
+    <img src="/maxJOT/_attachments/bash/screenplay/1.0/screen2.png" alt="Demo" width="300">
   </a>
-  <figcaption>wlaninfo.sh help screen</figcaption>
+  <figcaption>screenplay demo</figcaption>
 </figure>
+<figure class="doc-image">
+  <a href="/maxJOT/_attachments/bash/screenplay/1.0/screen3.png" class="glightbox">
+    <img src="/maxJOT/_attachments/bash/screenplay/1.0/screen3.png" alt="Help" width="300">
+  </a>
+  <figcaption>screenplay help</figcaption>
+</figure>
+<figure class="doc-image">
+  <a href="/maxJOT/_attachments/bash/screenplay/1.0/screen4.png" class="glightbox">
+    <img src="/maxJOT/_attachments/bash/screenplay/1.0/screen4.png" alt="Runfile" width="300">
+  </a>
+  <figcaption>screenplay runfile</figcaption>
+</figure>
+</div>
 <div class="sect2">
 <h3 id="_downloads_and_preview"><a class="anchor" href="#_downloads_and_preview"></a>Downloads and Preview</h3>
 <form action="/assist/download.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/bash/wlaninfo/1.2/wlaninfo.sh">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/bash/screenplay/1.0/screenplay.sh">
   <button type="submit" class="hover-fill-btn">
-    <span>⬇️ Download wlaninfo.sh 1.2</span>
+    <span>⬇️ Download screenplay.sh 1.0</span>
   </button>
 </form>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
-  <input type="hidden" name="file" value="/maxJOT/_attachments/bash/wlaninfo/1.2/wlaninfo.sh">
+  <input type="hidden" name="file" value="/maxJOT/_attachments/bash/screenplay/1.0/screenplay.sh">
   <button type="submit" class="hover-fill-btn">
-    <span>🔍 Preview wlaninfo.sh 1.2</span>
+    <span>🔍 Preview screenplay.sh 1.0</span>
   </button>
 </form>
 </div>

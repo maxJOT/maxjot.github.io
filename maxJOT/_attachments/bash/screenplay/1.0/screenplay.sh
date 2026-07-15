@@ -331,7 +331,7 @@ function gen_runfile {
   local lines=(
     '#----------------------------------------------------------------------'
     "# Filename: ${IAM%.sh}.run"
-    '# Purpose:  Default runfile used by ${IAM}'
+    "# Purpose:  Default runfile used by ${IAM}"
     '#           This sample file has been auto-generated.'
     '# URL:      https://maxjot.github.io/maxJOT/downloads/screenplay.html'
     '#----------------------------------------------------------------------'
@@ -366,7 +366,7 @@ function gen_runfile {
     msg I "runfile required"
     msg I "new default sample runfile created"
     msg I "file: ${DEFAULT_RUNFILE}"
-    echo
+    # echo
   fi
 }
 

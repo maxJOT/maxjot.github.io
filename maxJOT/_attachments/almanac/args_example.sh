@@ -3,7 +3,7 @@
 # Filename: args_example.sh
 # Author:   maxJOT
 # Purpose:  Process comandline options and arguments - demo
-# Platform: macOS/Linux running Bash > 4.2
+# Platform: macOS/Linux running Bash
 # License:  https://maxjot.github.io/maxJOT/license_maxjot.html
 # Purpose:  https://maxjot.github.io/maxJOT/bash/bash-almanac.html
 #============================================================================
@@ -42,17 +42,26 @@ function version {
   echo
 }
 
-function err1 {
-  # Error message. Takes $1 (lineno) $2 (msg). $3 $4 $5 are optional.
-  local B1=$( tput bold; tput setaf 1)
-  local T0=$( tput sgr0 )
-  local RG=$( tput bel )
-  echo; echo "${IAM} ($1) Aborted."
-  echo "${IAM}: ${B1}$2${T0}${RG}"
-  [[ -n $3 ]] && echo "$3"
-  [[ -n $4 ]] && echo "$4"
-  [[ -n $5 ]] && echo "$5"
-  echo
+function msg {
+  #
+  # Coherent messaging for errors and information.
+  # (https://maxjot.github.io/maxJOT/bash/bash-almanac.html)
+  # $1 = Severity E W I
+  # $2 = Function or facility (optional)
+  # $3 = Text (optional)
+  local iam opt cln fac= str=
+  cln="${BASH_LINENO[0]}" # Caller line number.
+  iam="${BASH_SOURCE[0]##*/}"
+  iam="${iam%.sh}"
+  [[ -n $2 ]] && fac=", $2"
+  [[ -n $3 ]] && str=", $3"
+  opt="${fac}${str}"
+  case "$1" in
+    E) printf "%%%s-E-%s%s\n\a" "${iam}" ${cln} "${opt}" >&2 ;;
+    W) printf "%%%s-W-%s%s\n" "${iam}" ${cln} "${opt}" >&2 ;;
+    I) printf "%%%s-I-%s%s\n" "${iam}" ${cln} "${opt}" ;;
+    *) printf "%s\n" "$@" ;;
+  esac
 }
 
 function cleanup {
@@ -70,9 +79,9 @@ function cleanup {
 # 
 for i in "$@"; do
   if grep -iqwE -- 'emo|ersion|elp|utput' <<< ${i:2}; then
-    err1 ${LINENO} "Invalid command line argument." \
-      "Invalid long option detected: ${i}" \
-      "Try \`${IAM} --help' for more information."
+    msg E args "Invalid command line argument."
+    msg I "Invalid long option detected: ${i}"
+    msg I "Try \`${IAM} --help' for more information."
     (( sourced )) && { cleanup; return 1; } || exit 1
   fi
 done
@@ -125,8 +134,8 @@ for i in "${!args[@]}"; do
         if (( i + 1 < ${#args[@]} )); then
           demo=1; args[i]=
         else
-          err1 ${LINENO} "Missing compression level." \
-            "Try \`${IAM} --help' for more information."
+          msg E args "Missing compression level."
+          msg I "Try \`${IAM} --help' for more information."
           (( sourced )) && { cleanup; return 1; } || exit 1
         fi ;;
     esac
@@ -148,8 +157,8 @@ for i in "${!args[@]}"; do
         if (( i + 1 < ${#args[@]} )); then
           output=1; args[i]=
         else
-          err1 ${LINENO} "No target filename." \
-            "Try \`${IAM} --help' for more information."
+          msg args "No target filename."
+          msg I "Try \`${IAM} --help' for more information."
           (( sourced )) && { cleanup; return 1; } || exit 1
         fi ;;
     esac
@@ -195,8 +204,8 @@ done
 (( help + version + output > 1 )) && combine=invalid
 
 if [[ ${combine} == invalid ]]; then
-    err1 ${LINENO} "Invalid combination of command line arguments." \
-      "Try \`${IAM} --help' for more information."
+    msg E args "Invalid combination of command line arguments."
+    msg "Try \`${IAM} --help' for more information."
     (( sourced )) && { cleanup; return 1; } || exit 1
 fi
 
@@ -209,13 +218,13 @@ fi
 # Source argument is mandatory, file must exist.
 #
 if [[ -z ${source} ]]; then
-  err1 ${LINENO} "No source filename" \
-    "Try \`${IAM} --help' for more information."
+  msg E args "No source filename"
+  msg I "Try \`${IAM} --help' for more information."
   (( sourced )) && { cleanup; return 1; } || exit 1
 elif [[ ! -e ${source} ]]; then
-  err1 ${LINENO} "File not found." \
-    "File: ${source}" \
-    "Try \`${IAM} --help' for more information."
+  msg E args "File not found."
+  msg I "File: ${source}"
+  msg I "Try \`${IAM} --help' for more information."
   (( sourced )) && { cleanup; return 1; } || exit 1
 fi
 

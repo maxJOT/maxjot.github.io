@@ -173,8 +173,11 @@
   padding: 0.125em 0.25em;
 }
 
-.doc .paragraph + .listingblock {
-  margin-top: 2.5em;    /* Space between copy code and previous paragraph */
+.doc .paragraph + .listingblock,
+.doc table.tableblock + .listingblock,
+.doc .tablecontainer + .listingblock {
+  margin-top: 2.5em;          /* Space between listing block (code)
+                               and previous content */
 }
 
 /* WebKit (Chrome, Edge, Safari) scrollbar styling */
@@ -205,7 +208,7 @@
   /* Compenate the --navbar-heigh used by other calculation in site.css of
      the default-ui. Since we disabled the header-content.hbs in header.hbs,
      the we simply compensate --navbar-height using a negative value. Hence
-     clickin the nav title and docuemnt link no longer cuases any top shifting */
+     clicking the nav title and docuemnt link no longer cuases any top shifting */
   top: 0 !important;
 }
 
@@ -609,7 +612,7 @@ body {
 }
 
 
-/* completely hide the hover § symbol */
+/* Completely hide the hover § symbol */
 .doc h1 .anchor::before,
 .doc h2 .anchor::before,
 .doc h3 .anchor::before,
@@ -617,6 +620,33 @@ body {
 .doc h5 .anchor::before,
 .doc h6 .anchor::before {
     content: none !important;
+}
+
+/* Add UPDATE admonition [NOTE.update] */
+.doc .admonitionblock.update td.icon i {
+    display: none !important;
+}
+
+.doc .admonitionblock.update td.icon .title {
+    display: none !important;
+}
+
+.doc .admonitionblock.update td.icon::before {
+    content: "UPDATE";
+  	align-items: center;
+  	border-radius: 0.45rem;
+  	display: inline-flex;
+  	filter: none;
+  	height: 1.25rem;
+  	padding: 0 0.5rem;
+  	vertical-align: initial;
+  	width: fit-content;
+    color: white;
+    background: #f0c040;
+    font-size: 0.83333rem;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 1;
 }
 
 /* END */

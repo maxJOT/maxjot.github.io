@@ -49,6 +49,9 @@
     <a class="nav-link" href="../downloads/wlaninfo.html">wlaninfo</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../downloads/screenplay.html">screenplay</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../downloads/dmgcrack.html">dmgcrack</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -107,6 +110,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reviews/dmgcrack-review.html">dmgcrack</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reviews/screenplay-review.html">screenplay</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reviews/almanac-term_init-review.html">Almanac Colors &amp; Styles</a>
@@ -381,12 +387,13 @@ function box {
   #          box r "http://maxjot.github.io/maxJOT/bash/bash-almanac.html"
   #          box r --bottom
   #
+  # Note: lastarg_0 = global mutable.
+  [[ -z ${lastarg_0} ]] &amp;&amp; lastarg_0=0
   local maxlen background indent fb t0
   local box_top box_middle box_bottom box1 box2 box3 box4 box5 box6 box7 box8
   t0=$( tput sgr0 )
   maxlen=65
-  box1=$'\u250C' box2=$'\u2500' box3=$'\u2510' box4=$'\u2502'
-  box5=$'\u2514' box6=$'\u2518' box7=$'\u251C' box8=$'\u2524'
+  box1='┌' box2='─' box3='┐' box4='│' box5='└' box6='┘' box7='├' box8='┤'
   # Generate horizontal line.
   box2=$( eval printf "${box2}%.0s" {1..${maxlen}} )
   # Generate top middle and bottom box-lines.
@@ -406,16 +413,16 @@ function box {
   indent="  ${fb}${box4}${t0}"
   if [[ "$2" == --top ]]; then
     printf "  ${fb}${box_top}${t0}\n"
-    lastarg=0
+    lastarg_0=0
   elif [[ "$2" == --bottom ]]; then
     printf "  ${fb}${box_bottom}${t0}\n"
-    lastarg=0
+    lastarg_0=0
   elif [[ "$2" == --middle ]]; then
     printf "  ${fb}${box_middle}${t0}\n"
-    lastarg=0
+    lastarg_0=0
   else
     # Insert indent depending on previous lastarg.
-    case ${lastarg} in
+    case ${lastarg_0} in
       0) printf "   ${fb}${background}${box4}${t0}\r" ;;
       1) unset indent ;;
       2) ;;
@@ -423,13 +430,13 @@ function box {
     esac
     case "${3}" in
       0) printf "${indent}${fb} %s${t0}\n" "$2"
-         lastarg=0 ;;
+         lastarg_0=0 ;;
       1) printf "${indent}${fb} %s${t0}" "$2"
-         lastarg=1 ;;
+         lastarg_0=1 ;;
       2) printf "${indent}${fb} %s${t0}\r" "$2"
-         lastarg=2 ;;
+         lastarg_0=2 ;;
       *) printf "${indent}${fb} %s${t0}\n" "$2"
-         lastarg=0 ;;
+         lastarg_0=0 ;;
     esac
   fi
 }
@@ -576,13 +583,358 @@ function get_reply {
 <h2 id="_arguments_and_options"><a class="anchor" href="#_arguments_and_options"></a>Arguments and Options</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Parsing command-line arguments in a flexible and user-friendly way can quickly become complex when aiming for professional-grade behavior. Beyond basic option handling, a capable parser must manage option bundles, parameterized options, mutual exclusivity rules, diagnostics, and meaningful error reporting.</p>
+<p>Parsing command-line arguments beyond simple flag handling can quickly
+become complex when options may be combined, repeated, supplied in
+arbitrary order, or require additional validation.</p>
 </div>
 <div class="paragraph">
-<p>This implementation demonstrates structured argument parsing in Bash. It is designed to be order-agnostic and tolerant of redundant options, allowing users to supply arguments in any sequence while handling repeated specifications gracefully.</p>
+<p>This implementation demonstrates structured command-line argument parsing
+in Bash. It is designed to be order-agnostic and user-friendly, allowing
+options and arguments to appear in any sequence while handling repeated
+option specifications without adverse effects.</p>
 </div>
 <div class="paragraph">
-<p>The demonstration script serves as a practical reference that can be adapted, simplified, or extended according to application requirements.</p>
+<p>The demonstration script serves as a practical reference that can be
+adapted, simplified, or extended according to application requirements.
+Rather than relying on a monolithic parsing loop, the implementation
+divides processing into distinct phases, each responsible for a specific
+aspect of validation or argument interpretation.</p>
+</div>
+<div class="paragraph">
+<p>The parser consists of five processing phases:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reject malformed long options (e.g. <code>-help</code> instead of <code>--help</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse simple short and long options, including combined short-option bundles.
+Options may appear multiple times and in any order without adverse effects.
+(e.g. <code>-hvd</code> or <code>-hdv</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse options that require an additional parameter, such as a number,
+keyword, or filename (e.g. <code>--demo 3 -o output.txt</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse stand-alone command-line arguments that are not associated with
+options, such as filenames or internal keywords (e.g. <code>backup /</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase 5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validate argument combinations, verify mandatory inputs, and execute
+actions associated with selected options.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/usr/bin/env bash
+
+IAM=( ${BASH_SOURCE[0]##*/} 1.1 )
+
+# Address exit vs. return if source executed.
+( return 0 2&gt;/dev/null ) &amp;&amp; sourced=1 || sourced=0
+
+function help {
+  echo "Usage:
+  ${IAM} [-h | -v] [-d level] source [-o output filename]"
+  echo
+  echo "Arguments:
+  -h, --help               show help
+  -v, --version            show version
+  -d, --demo level         demo level (0-3)
+  -o, --output filename    write output to filename
+  source                   source filename"
+  echo
+  echo "Examples:
+  ${IAM} -d 1 sample.txt
+  ${IAM} -d 1 sample.txt -o sample.out"
+  echo
+  echo "Description:
+  Simple example how to parse command line arguments."
+  echo
+}
+
+function version {
+  echo "Version ${IAM[1]}"
+  echo
+  echo "Copyright (c) 2024-2026 maxJOT. All Rights Reserved."
+  echo "Free to use but not for sale. No redistribution of modified"
+  echo "copies. https://maxjot.github.io/maxJOT/license_maxjot.html"
+  echo
+}
+
+function msg {
+  #
+  # Coherent messaging for errors and information.
+  # (https://maxjot.github.io/maxJOT/bash/bash-almanac.html)
+  # $1 = Severity E W I
+  # $2 = Function or facility (optional)
+  # $3 = Text (optional)
+  local iam opt cln fac= str=
+  cln="${BASH_LINENO[0]}" # Caller line number.
+  iam="${IAM%.sh}"
+  [[ -n $2 ]] &amp;&amp; fac=", $2"
+  [[ -n $3 ]] &amp;&amp; str=", $3"
+  opt="${fac}${str}"
+  case "$1" in
+    E) printf "%%%s-E-%s%s\n\a" "${iam}" ${cln} "${opt}" &gt;&amp;2 ;;
+    W) printf "%%%s-W-%s%s\n" "${iam}" ${cln} "${opt}" &gt;&amp;2 ;;
+    I) printf "%%%s-I-%s%s\n" "${iam}" ${cln} "${opt}" ;;
+    *) printf "%s\n" "$@" ;;
+  esac
+}
+
+function cleanup {
+    unset -f help version msg
+    unset v_0 h_0 d_0 o_0 outfile_0 source_0 level_0 args_0 combine
+    unset sourced consolidate nomatch char item i IAM B1 T0 RG
+    unset -f cleanup
+}
+
+
+# MAIN #
+
+# ----------------------------------------------------------------------------
+# Phase 1 detects and rejects invalid long options that use a single
+# dash (-) instead of two dashes (--). Word matching after removing
+# the first two characters is used to detect these invalid forms.
+# ----------------------------------------------------------------------------
+#
+for i in "$@"; do
+  if grep -iqwE -- 'emo|ersion|elp|utput' &lt;&lt;&lt; ${i:2}; then
+    echo
+    msg E args "invalid command line argument"
+    msg I "invalid long option detected: ${i}"
+    msg I "try \`${IAM} --help'"
+    echo
+    (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+  fi
+done
+
+# ----------------------------------------------------------------------------
+# Phase 2 parses simple short and long command-line options, such as
+# -h, --help and -v, --version. These options may also be combined
+# into a single argument, such as -hv or -vh. When recognized, the
+# corresponding variables (h_0, v_0) are set to 1 and the matching
+# option characters are removed from the argument list.
+#
+# Options may appear multiple times and in any order without causing
+# any ill effects. Duplicate matches simply repeat setting the
+# corresponding variables to 1. For example, -hv, -hhvv and -hvhhv
+# all produce the same result.
+#
+# Any character inside a combined option that is not recognized by
+# this parsing phase is extracted and reconstructed as a new command-
+# line option for further processing during phase 3. For example:
+#
+#   -hvd 2  =&gt; h_0=1, v_0=1, -d 2
+#   -hvcd 2 =&gt; h_0=1, v_0=1, -cd 2
+# ----------------------------------------------------------------------------
+#
+declare -a args_0=("$@")
+h_0=0 v_0=0
+
+for i in "${!args_0[@]}"; do
+  case "${args_0[i]}" in
+    -h|--help) h_0=1; args_0[i]= ;;
+    -v|--version) v_0=1; args_0[i]= ;;
+    -[hv]*)
+      # Support a combination of arguments.
+      bundle="${args_0[i]#-}"
+      nomatch=
+      for (( j=0; j&lt;${#bundle}; j++ )); do
+        char="${bundle:j:1}"
+        case "${char}" in
+          h) h_0=1 ;;
+          v) v_0=1 ;;
+          *) nomatch+="${char}" ;;
+        esac
+      done
+      # Remove matching options or create new options.
+      [[ -n ${nomatch} ]] &amp;&amp; args_0[i]="-${nomatch}" || args_0[i]=
+    ;;
+  esac
+done
+
+# ----------------------------------------------------------------------------
+# Phase 3 parses dash (-) options that have not yet been consumed by
+# any of the previous parsing phases. Unlike simple options, these
+# require an additional argument or parameter to be valid, such as a
+# number, word, or filename.
+#
+# Valid options and parameters are assigned to variables and consumed
+# from the argument list, just like in the previous parsing phases.
+# These options must not be the last argument in the list but may occur
+# in any order and may be specified multiple times without ill effects,
+# other than reassigning the corresponding variables. For example:
+#
+#   -d 1 -d 3   =&gt; d_0=1, level_0=3
+#   -o filename =&gt; o_0=1, outfile_0=filename
+# ----------------------------------------------------------------------------
+#
+d_0=0 level_0=0 o_0=0 outfile_0=0
+#
+for i in "${!args_0[@]}"; do
+  if [[ ${d_0} = 1 ]]; then
+    case "${args_0[i]}" in
+      [0-3]) level_0=${args_0[i]}; args_0[i]=; break ;;
+      *) echo
+         msg E args "invalid demo level"
+         msg I "level: ${args_0[i]}"
+         msg I "try \`${IAM} --help'"
+         echo
+         (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1 ;;
+    esac
+  else
+    case "${args_0[i]}" in
+      -d|--demo) # Must not be the last argument
+        if (( i + 1 &lt; ${#args_0[@]} )); then
+          d_0=1; args_0[i]=
+        else
+          echo
+          msg E args "missing demo level"
+          msg I "try \`${IAM} --help'"
+          echo
+          (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+        fi ;;
+    esac
+  fi
+done
+
+for i in "${!args_0[@]}"; do
+  if [[ ${o_0} = 1 ]]; then
+    case "${args_0[i]}" in
+      -*) echo
+          msg E args "invalid filename"
+          msg I "filename: ${args_0[i]}"
+          msg I "try \`${IAM} --help'"
+          echo
+          (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1 ;;
+       *) outfile_0="${args_0[i]}"; args_0[i]=; break ;;
+    esac
+  else
+    case "${args_0[i]}" in
+      -o|--output) # Must not be the last argument.
+        if (( i + 1 &lt; ${#args_0[@]} )); then
+          o_0=1; args_0[i]=
+        else
+          echo
+          msg E args "missing output filename"
+          msg I "try \`${IAM} --help'"
+          echo
+          (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+        fi ;;
+    esac
+  fi
+done
+
+# ----------------------------------------------------------------------------
+# Phase 4 parses stand-alone command-line arguments that are neither
+# dash (-) options nor option parameters, such as keywords or filenames.
+#
+# At this stage, all valid command-line arguments should have been
+# assigned to variables, and their corresponding array elements are empty.
+#
+# Finally, consolidate the array by removing all empty (consumed) elements
+# and consider any remaining elements as invalid.
+# ----------------------------------------------------------------------------
+#
+source_0=
+#
+for i in "${!args_0[@]}"; do
+  case "${args_0[i]}" in
+    "") continue ;; # Ignore empty array elements.
+    -*) continue ;; # Ignore dash (-) options.
+    *) source_0="${args_0[i]}"; args_0[i]=; break ;;
+  esac
+done
+
+# Consolidate the list of command line arguments by
+# removing empty (consumed) array elements.
+#
+declare -a consolidate=()
+for item in "${args_0[@]}"; do
+    [[ -n "${item}" ]] &amp;&amp; consolidate+=( "${item}" )
+done
+
+# Any remaining command line arguments are invalid.
+#
+if (( ${#consolidate[@]} &gt; 0 )); then
+  echo
+  msg E args "invalid argument"
+  msg I "argument(s): ${consolidate[@]}"
+  msg I "try \`${IAM} --help'"
+  echo
+  (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+fi
+
+# ----------------------------------------------------------------------------
+# Phase 5 determines which command-line arguments are mandatory and
+# which options are mutually exclusive. Since validated option flags
+# are either set to 1 or remain at 0, simple arithmetic can be used
+# to detect invalid combinations.
+#
+# This final phase also verifies required filenames and executes
+# help or version functions according to the specified option flags.
+# ----------------------------------------------------------------------------#
+(( h_0 + v_0 &gt; 1 )) &amp;&amp; combine=invalid
+(( h_0 + v_0 + d_0 &gt; 1 )) &amp;&amp; combine=invalid
+(( h_0 + v_0 + o_0 &gt; 1 )) &amp;&amp; combine=invalid
+
+if [[ ${combine} == invalid ]]; then
+    echo
+    msg E args "invalid combination of arguments"
+    msg I "try \`${IAM} --help'"
+    echo
+    (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+fi
+
+# Display help and version as requested.
+#
+(( h_0 )) &amp;&amp; { \help; (( sourced )) &amp;&amp; { \cleanup; return; } || exit; }
+(( v_0 )) &amp;&amp; { \version; (( sourced )) &amp;&amp; { \cleanup; return; } || exit; }
+
+# Source variable is mandatory, file must exist.
+#
+if [[ -z ${source_0} ]]; then
+  echo
+  msg E args "missing source filename"
+  msg I "try \`${IAM} --help'"
+  echo
+  (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+elif [[ ! -e ${source_0} ]]; then
+  echo
+  msg E args "file not found"
+  msg I "file: ${source_0}"
+  msg I "try \`${IAM} --help'"
+  echo
+  (( sourced )) &amp;&amp; { \cleanup; return 1; } || exit 1
+fi
+
+echo
+echo "Parsed command line arguments:"
+echo "------------------------------"
+echo "source:   ${source_0}"
+echo "output    ${o_0}"
+echo "outfile:  ${outfile_0}"
+echo "demo:     ${d_0}"
+echo "level:    ${level_0}"
+
+cleanup
+
+## END</code></pre>
+</div>
 </div>
 <form action="/assist/script_viewer.html" method="get" target="_blank" rel="noopener" class="external-btn-form">
   <input type="hidden" name="file" value="/maxJOT/_attachments/almanac/args_example.sh">
@@ -602,6 +954,62 @@ function get_reply {
   </a>
   <figcaption>args_example demo</figcaption>
 </figure>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coherent_messaging"><a class="anchor" href="#_coherent_messaging"></a>Coherent Messaging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Shell scripts tend to define their own conventions for displaying custom error messages and information to the user. This leads to inconsistent output formatting that is difficult to track among different or complex scripts.</p>
+</div>
+<div class="paragraph">
+<p>The <code>msg</code> function introduces a coherent and easy-to-follow format for presenting errors, warnings, and informational messages.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="paragraph">
+<p>%backup-I-120, starting backup
+%backup-W-140, primary network share unavailable
+%backup-I-145, using mirror
+%backup-E-101, mt, media unavailable</p>
+</div>
+<div class="paragraph">
+<p>It consists of:
+* the originating program name
+* the severity level (Info, Error, Warning)
+* the caller location (script line number)
+* optional contextual information (facility or function)
+* message text</p>
+</div>
+<div class="paragraph">
+<p>Instead of repeatedly deciding how a message should look, scripts emit structured messages through a single interface, making terminal output visually coherent and readable at a glance. That’s a legitimate design goal on its own, especially for CLI tools that are used interactively.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">function msg {
+  #
+  # Coherent messaging for errors and information.
+  # (https://maxjot.github.io/maxJOT/bash/bash-almanac.html)
+  # $1 = Severity E W I
+  # $2 = Function or facility (optional)
+  # $3 = Text (optional)
+  local iam opt cln fac= str=
+  cln="${BASH_LINENO[0]}" # Caller line number.
+  iam="${BASH_SOURCE[0]##*/}"
+  iam="${iam%.sh}"
+  [[ -n $2 ]] &amp;&amp; fac=", $2"
+  [[ -n $3 ]] &amp;&amp; str=", $3"
+  opt="${fac}${str}"
+  case "$1" in
+    E) printf "%%%s-E-%s%s\n\a" "${iam}" ${cln} "${opt}" &gt;&amp;2 ;;
+    W) printf "%%%s-W-%s%s\n" "${iam}" ${cln} "${opt}" &gt;&amp;2 ;;
+    I) printf "%%%s-I-%s%s\n" "${iam}" ${cln} "${opt}" ;;
+    *) printf "%s\n" "$@" ;;
+  esac
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </article>
